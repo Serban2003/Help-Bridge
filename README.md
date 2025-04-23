@@ -16,6 +16,8 @@ npm run build
 cd ..\..\Server\
 npm I
 ```
+6. Install the database by using the script provided in the Database folder
+7. Populate the database by using the script provided in the Database folder (may require ID changes)
 
 ## Run
 1. Server (in Server folder)
