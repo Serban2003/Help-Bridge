@@ -1,6 +1,6 @@
 # Help-Bridge
 
-## Instalation
+## Installation
 1. Open GitBash and type ```git clone https://github.com/Serban2003/Help-Bridge.git```
 2. Install [Node.js](https://nodejs.org/dist/v22.15.0/node-v22.15.0-x64.msi)
 3. Open the Help-Bridge folder with VSCode
