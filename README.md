@@ -36,3 +36,8 @@ npm run start
 - [Node.js](https://nodejs.org/dist/v22.15.0/node-v22.15.0-x64.msi)
 - (SQL Server)[https://go.microsoft.com/fwlink/p/?linkid=2215158&clcid=0x409&culture=en-us&country=us]
 - msodbcsql.msi (driver)[https://go.microsoft.com/fwlink/?linkid=2307162] (you can also find it in the Drivers directory)
+
+## Additional info
+- `ts_created` represents the time when the entry was added to the database (useful if you want to know when a user was created)
+- `ts_created` fields from the database are created automatically by the database (no need to insert values into them)
+- For now, all `I_id` fields are null, and the `Profile_Images` table is empty
