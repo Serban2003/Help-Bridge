@@ -1,0 +1,141 @@
+create database HelpBridge collate SQL_Latin1_General_CP1_CI_AS
+go
+
+use HelpBridge
+go
+
+exec sp_addextendedproperty 'MS_Description', '20cmRecords(Adunati)'
+go
+
+use master
+go
+
+use HelpBridge
+go
+
+grant connect on database :: HelpBridge to dbo
+go
+
+grant view any column encryption key definition, view any column master key definition on database :: HelpBridge to [public]
+go
+
+create table dbo.Helper_Categories
+(
+    Name        varchar(255) not null,
+    Description varchar(255) not null,
+    HC_id       int identity
+        constraint Helper_Categories_pk
+            primary key
+)
+go
+
+create table dbo.Profile_Images
+(
+    I_id int identity
+        constraint Profile_Images_pk
+            primary key,
+    Name varchar(50)    not null,
+    Data varbinary(max) not null
+)
+go
+
+create table dbo.Companies
+(
+    Name        varchar(255) not null,
+    Description varchar(255) not null,
+    Address     varchar(255),
+    C_id        int identity
+        constraint Companies_pk
+            primary key,
+    I_id        int
+        constraint Companies_Profile_Images_I_id_fk
+            references dbo.Profile_Images
+)
+go
+
+create table dbo.Helpers
+(
+    H_id        int identity
+        constraint Helpers_pk
+            primary key,
+    HC_id       int          not null
+        constraint Helpers_Helper_Categories_HC_id_fk
+            references dbo.Helper_Categories,
+    C_id        int          not null
+        constraint Helpers_Companies_C_id_fk
+            references dbo.Companies,
+    Firstname   varchar(255) not null,
+    Lastname    varchar(255) not null,
+    Description varchar(255) not null,
+    Age         int          not null,
+    Experience  int          not null,
+    Phone       varchar(20)  not null,
+    Email       varchar(255) not null,
+    Password    varchar(255) not null,
+    I_id        int
+        constraint Helpers_Profile_Images_I_id_fk
+            references dbo.Profile_Images,
+    Ts_created  timestamp    not null
+)
+go
+
+exec sp_addextendedproperty 'MS_Description', 'Number of months', 'SCHEMA', 'dbo', 'TABLE', 'Helpers', 'COLUMN',
+     'Experience'
+go
+
+create table dbo.Users
+(
+    U_id       int identity
+        constraint Users_pk
+            primary key,
+    Firstname  varchar(50)  not null,
+    Lastname   varchar(50)  not null,
+    Email      varchar(50)  not null,
+    Password   varchar(255) not null,
+    Phone      varchar(20)  not null,
+    I_id       int
+        constraint Users_Profile_Images_I_id_fk
+            references dbo.Profile_Images,
+    Ts_created timestamp    not null
+)
+go
+
+create table dbo.Reviews
+(
+    R_id        int identity
+        constraint Reviews_pk
+            primary key,
+    H_id        int          not null
+        constraint Reviews_Helpers_H_id_fk
+            references dbo.Helpers,
+    Title       varchar(255) not null,
+    Description varchar(255) not null,
+    U_id        int          not null
+        constraint Reviews_Users_U_id_fk
+            references dbo.Users,
+    Rating      float        not null,
+    Ts_created  timestamp    not null
+)
+go
+
+create table dbo.Appointments
+(
+    A_id       int identity
+        constraint Appointments_pk
+            primary key,
+    H_id       int          not null
+        constraint Appointments_Helpers_H_id_fk
+            references dbo.Helpers,
+    Title      varchar(255) not null,
+    Message    varchar(255) not null,
+    Date       datetime     not null,
+    U_id       int          not null
+        constraint Appointments_Users_U_id_fk
+            references dbo.Users,
+    R_id       int
+        constraint Appointments_Reviews_R_id_fk
+            references dbo.Reviews,
+    Ts_created timestamp    not null
+)
+go
+

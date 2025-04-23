@@ -1,7 +1,7 @@
 import { sql, dbConfig } from "../dbConfig.js";
 
 export class User {
-    constructor(U_id, firstname, lastname, email, password, phone, I_id = null, ts_created) {
+    constructor(U_id, firstname, lastname, email, password, phone, I_id = null, ts_created = null) {
         this.U_id = U_id;
         this.firstname = firstname;
         this.lastname = lastname;
