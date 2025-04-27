@@ -1,0 +1,12 @@
+.main-navbar{
+    background-color: var(--accent-color);
+}
+
+.login-button{
+    background-color: var(--background-color) !important;
+    border-color: var(--border-color) !important;
+}
+
+.login-button:hover{
+    background-color: var(--secondary-color) !important;
+}

@@ -11,13 +11,15 @@ npm i
 cd help_bridge
 npm run build
 ```
-5. Install server:
+5. Install Bootstrap: `npm install react-bootstrap bootstrap`
+6. Install Lucide (for icons): `npm install lucide-react`
+7. Install server:
 ```
 cd ..\..\Server\
 npm I
 ```
-6. Install the database by using the script provided in the Database folder
-7. Populate the database by using the script provided in the Database folder (may require ID changes)
+8. Install the database by using the script provided in the Database folder
+9. Populate the database by using the script provided in the Database folder (may require ID changes)
 
 ## Run
 1. Server (in Server folder)
