@@ -20,4 +20,6 @@ app.use("/api/helpers", helperRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/profile_images", profileImageRoutes);
 
-app.listen(5000, () => console.log("API server running on http://localhost:5000"));
+app.listen(5000, () =>
+  console.log("API server running on http://localhost:5000")
+);

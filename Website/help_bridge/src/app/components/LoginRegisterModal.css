@@ -1,0 +1,27 @@
+.toggle-button-custom {
+  color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+  background-color: #fff !important;
+}
+
+.toggle-button-custom-active {
+  background-color: var(--accent-color) !important;
+  color: #fff !important;
+}
+
+.custom-button {
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+}
+
+.custom-button:hover {
+  background-color: var(--accent-hover-color) !important;
+}
+
+.nav-tabs .nav-link {
+  color: var(--accent-color) !important;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--text-dark) !important;
+}
