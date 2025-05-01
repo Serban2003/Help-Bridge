@@ -1,0 +1,20 @@
+.offer-icon {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+  }
+  
+  .offer-box {
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .offer-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .offer-section{
+    background-color: var(--accent-color);
+  }
+  

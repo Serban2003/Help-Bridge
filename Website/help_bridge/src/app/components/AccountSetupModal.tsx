@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { User, Phone, Building, FileText, Briefcase } from "lucide-react";
 import "./LoginRegisterModal.css";
-
+import "./../globals.css";
 interface AccountSetupModalProps {
   show: boolean;
   handleClose: () => void;

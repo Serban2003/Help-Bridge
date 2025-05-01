@@ -22,6 +22,7 @@ import RegisterStatusModal from "./RegisterStatusModal";
 import InputGroup from "react-bootstrap/InputGroup";
 
 import "./LoginRegisterModal.css";
+import "./../globals.css";
 
 interface LoginRegisterModalProps {
   show: boolean;

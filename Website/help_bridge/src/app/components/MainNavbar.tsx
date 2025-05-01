@@ -32,11 +32,12 @@ export const MainNavbar = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="">Home</Nav.Link>
-              <Nav.Link href="/link">About</Nav.Link>
-              <NavDropdown title="Find help" id="help-nav-dropdown">
-                <NavDropdown.Item href="#action1">Item #1</NavDropdown.Item>
-                <NavDropdown.Item href="#action2">Item #2</NavDropdown.Item>
+              <Nav.Link href="" className="link-text-white">Home</Nav.Link>
+              <Nav.Link href="/link" className="link-text-white">About</Nav.Link>
+              <NavDropdown title="Find help" id="help-nav-dropdown" className="link-text-white">
+                <NavDropdown.Item href="#action1">Financial</NavDropdown.Item>
+                <NavDropdown.Item href="#action2">Psychological</NavDropdown.Item>
+                <NavDropdown.Item href="#action2">IT</NavDropdown.Item>
               </NavDropdown>
             </Nav>
             <Button className="btn-light" onClick={handleShow}>

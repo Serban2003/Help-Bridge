@@ -1,0 +1,15 @@
+.footer-link {
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  
+  .footer-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+  }
+  
+  footer h5 {
+    margin-bottom: 1rem;
+  }
+  

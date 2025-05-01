@@ -1,7 +1,7 @@
 :root {
   --accent-color: rgb(37, 169, 251);
   --accent-hover-color: rgb(99, 199, 253);
-  --background-color: rgb(250, 250, 250);
+  --background-color: #f8f9fa;
   --border-color: rgb(229, 231, 235);
   --text-primary-color: rgb(46, 46, 46);
   --text-secondary-color: rgb(107, 114, 128);
@@ -31,4 +31,54 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.toggle-button-custom {
+  color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+  background-color: #fff !important;
+}
+
+.toggle-button-custom-active {
+  background-color: var(--accent-color) !important;
+  color: #fff !important;
+}
+
+.custom-button {
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+}
+
+.custom-button:hover {
+  background-color: var(--accent-hover-color) !important;
+}
+
+.outline-button-custom{
+  background-color: #fff !important;
+  border-color: var(--accent-color) !important;
+  color: var(--accent-color) !important;
+}
+
+.outline-button-custom:hover{
+  background-color: var(--accent-color) !important;
+  color: #fff !important;
+}
+
+.accent-color{
+  color: var(--accent-color) !important;
+}
+
+.link-text-white, .link-text-white a{
+  color: #fff !important;
+}
+.link-text-white:hover, .link-text-white a:hover{
+  color:#ececec !important;
+}
+
+.link-text-white .dropdown-item{
+  color: #212529 !important;
+}
+
+.link-text-white .dropdown-item:hover{
+  color: #000000 !important;
 }
