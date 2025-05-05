@@ -1,0 +1,53 @@
+/* Profile image */
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    width: 300px;
+    overflow: hidden;
+    background-color: blue;
+    border-radius: 50%;
+  }
+  
+  /* Grid layout for reviews + calendar */
+  .reviews-calendar-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    transition: all 0.4s ease; /* this will animate column resize */
+  }
+  
+  .reviews-calendar-grid.two-cols {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  /* Review block content (no need to animate width here) */
+  .review-block {
+    /* optional styling or internal spacing */
+  }
+  
+  /* Calendar fade/slide in */
+  .calendar-block {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    max-height: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  
+  .calendar-block.show {
+    opacity: 1;
+    transform: translateX(0);
+    max-height: 1000px;
+    pointer-events: auto;
+  }
+  
+  /* Responsive stacking */
+  @media (max-width: 768px) {
+    .reviews-calendar-grid.two-cols {
+      grid-template-columns: 1fr;
+    }
+  }
+  
