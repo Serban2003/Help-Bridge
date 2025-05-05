@@ -37,16 +37,22 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = new Date(year, month, day).toISOString().split("T")[0];
+      const currentDate = new Date(year, month, day);
+      const dateStr = getFormatedDate(currentDate, "yyyy-mm-dd");
       const isAvailable = availableSlots[dateStr] !== undefined;
+      const isPast = currentDate < new Date(new Date().setHours(0, 0, 0, 0));
 
       calendar.push(
         <div
           key={day}
           className={`calendar-day rounded ${
-            isAvailable ? "available" : "disabled"
+            isAvailable && !isPast ? "available" : "disabled"
           } ${selectedDate === dateStr ? "selected" : ""}`}
-          onClick={() => isAvailable && setSelectedDate(dateStr)}
+          onClick={() => {
+            if (isAvailable && !isPast) {
+              setSelectedDate(dateStr);
+            }
+          }}
         >
           {day}
         </div>
@@ -55,6 +61,14 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
 
     return calendar;
   };
+
+  const getFormatedDate = (date: Date, type: string) => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    if (type === "yyyy-mm-dd") return `${yyyy}-${mm}-${dd}`;
+    else return `${dd}-${mm}-${yyyy}`;
+  }
 
   return (
     <>
@@ -66,7 +80,7 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
         {selectedDate && (
           <>
             <h6 className="fw-semibold mb-2">
-              Available times on {new Date(selectedDate).toLocaleDateString()}
+              Available times on {getFormatedDate(new Date(selectedDate), "dd-mm-yyyy")}
             </h6>
             <div className="d-flex flex-wrap gap-2 mb-3">
               {availableSlots[selectedDate]?.map((time) => (
