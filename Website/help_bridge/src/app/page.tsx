@@ -1,18 +1,14 @@
 "use client";
 
 import styles from "./page.module.css";
-import MainNavbar from "./components/MainNavbar";
 import Banner from "./components/Banner";
 import MissionSection from "./components/MissionSection";
 import OfferSection from "./components/OffersSection";
 import WhyChooseUsSection from "./components/WhyChooseUsSection";
-import Footer from "./components/Footer";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function Home() {
   return (
     <div className={styles.page}>
-      <MainNavbar />
       <Banner
           imageUrl="/images/consulting_banner.jpeg"
           title="Expert advice made easy - book, connect, grow"
@@ -28,7 +24,6 @@ export default function Home() {
         <OfferSection/>
         <WhyChooseUsSection/>
       </main>
-      <Footer/>
     </div>
   );
 }
