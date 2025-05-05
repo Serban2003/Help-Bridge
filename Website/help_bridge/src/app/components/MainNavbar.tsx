@@ -32,12 +32,12 @@ export const MainNavbar = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="" className="link-text-white">Home</Nav.Link>
-              <Nav.Link href="/link" className="link-text-white">About</Nav.Link>
+              <Nav.Link href="/" className="link-text-white">Home</Nav.Link>
+              <Nav.Link href="/about" className="link-text-white">About</Nav.Link>
               <NavDropdown title="Find help" id="help-nav-dropdown" className="link-text-white">
-                <NavDropdown.Item href="#action1">Financial</NavDropdown.Item>
-                <NavDropdown.Item href="#action2">Psychological</NavDropdown.Item>
-                <NavDropdown.Item href="#action2">IT</NavDropdown.Item>
+                <NavDropdown.Item href="/search?category=Financial">Financial</NavDropdown.Item>
+                <NavDropdown.Item href="/search?category=Psychological">Psychological</NavDropdown.Item>
+                <NavDropdown.Item href="/search?category=IT">IT</NavDropdown.Item>
               </NavDropdown>
             </Nav>
             <Button className="btn-light" onClick={handleShow}>
@@ -50,7 +50,7 @@ export const MainNavbar = () => {
       {/* Modal for Login/Register */}
       <LoginRegisterModal
         show={showLoginRegisterModal}
-        handleClose={() => setShowLoginRegisterModal(false)}
+        handleClose={handleClose}
       />
     </>
   );

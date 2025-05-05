@@ -1,0 +1,62 @@
+/* src/app/components/HelperCard.css */
+
+.helper-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 24px;
+  gap: 24px;
+  cursor: pointer;
+}
+
+.helper-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.helper-avatar {
+  flex-shrink: 0;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;      /* taie poza în formă de cerc */
+  background: #ddd;
+}
+
+.helper-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.helper-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.helper-name {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.helper-category {
+  margin: 6px 0;
+  color: #444;
+  font-size: 1.1rem;
+}
+
+.helper-stars {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.helper-stars .star {
+  font-size: 1.4rem;
+  color: gold;
+}
