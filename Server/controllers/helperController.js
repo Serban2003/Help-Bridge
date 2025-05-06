@@ -1,14 +1,13 @@
 import { sql, dbConfig } from "../dbConfig.js";
 
 export class Helper {
-    constructor(H_id, HC_id, C_id, firstname, lastname, description, age, experience, email, password, phone, I_id = null, ts_created = null) {
+    constructor(H_id, HC_id, C_id, firstname, lastname, description, experience, email, password, phone, I_id = null, ts_created = null) {
         this.H_id = H_id;
         this.HC_id = HC_id;
         this.C_id = C_id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.description = description;
-        this.age = age;
         this.experience = experience;
         this.email = email;
         this.password = password;
@@ -30,7 +29,6 @@ export const getAllHelpers = async (req, res) => {
             row.Firstname,
             row.Lastname,
             row.Description,
-            row.Age,
             row.Experience,
             row.Email,
             row.Password,
@@ -47,12 +45,12 @@ export const getAllHelpers = async (req, res) => {
   };
   
 export const createHelper = async (req, res) => {
-    const { HC_id, C_id, firstname, lastname, description, age, experience, email, password, phone, I_id = null } = req.body;
+    const { HC_id, C_id, firstname, lastname, description, experience, email, password, phone, I_id = null } = req.body;
     try {
       await sql.connect(dbConfig);
       await sql.query`
-        INSERT INTO Helpers (HC_id, C_id, Firstname, Lastname, Description, Age, Experience, Email, Password, Phone, I_id)
-        VALUES (${HC_id}, ${C_id}, ${firstname}, ${lastname}, ${description}, ${age}, ${experience}, ${email}, ${password}, ${phone}, ${I_id})`;
+        INSERT INTO Helpers (HC_id, C_id, Firstname, Lastname, Description, Experience, Email, Password, Phone, I_id)
+        VALUES (${HC_id}, ${C_id}, ${firstname}, ${lastname}, ${description}, ${experience}, ${email}, ${password}, ${phone}, ${I_id})`;
       res.status(201).send("Helper created successfully");
     } catch (err) {
       console.error("POST /helpers error:", err);
@@ -84,7 +82,6 @@ export const getHelperByEmail = async (req, res) => {
         row.Firstname,
         row.Lastname,
         row.Description,
-        row.Age,
         row.Experience,
         row.Email,
         row.Password,
@@ -119,7 +116,6 @@ export const getHelperByEmail = async (req, res) => {
             row.Lastname,
             row.Description,
             row.Experience,
-            row.Age,
             row.Email,
             row.Password,
             row.Phone,

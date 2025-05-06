@@ -67,7 +67,6 @@ create table dbo.Helpers
     Firstname   varchar(255) not null,
     Lastname    varchar(255) not null,
     Description varchar(255) not null,
-    Age         int          not null,
     Experience  int          not null,
     Phone       varchar(20)  not null,
     Email       varchar(255) not null,

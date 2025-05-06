@@ -5,7 +5,6 @@ export class Helper {
     private _firstname: string;
     private _lastname: string;
     private _description: string;
-    private _age: number; // integer
     private _experience: number; // integer in months
     private _email: string;
     private _password: string;
@@ -13,8 +12,7 @@ export class Helper {
     private _I_id: number | null = null; // Optional property
     private _ts_created: Date;
     
-    constructor(H_id: number, HC_id: number, C_id: number, firstname: string, lastname: string, description: string,
-                age: number, experience: number, email: string, password: string, phone: string, I_id: number | null = null, ts_created: Date)
+    constructor(H_id: number, HC_id: number, C_id: number, firstname: string, lastname: string, description: string, experience: number, email: string, password: string, phone: string, I_id: number | null = null, ts_created: Date)
     {
         this._H_id = H_id;
         this._HC_id = HC_id;
@@ -22,7 +20,6 @@ export class Helper {
         this._firstname = firstname;
         this._lastname = lastname;
         this._description = description;
-        this._age = age;
         this._experience = experience;
         this._email = email;
         this._password = password;
@@ -71,13 +68,6 @@ export class Helper {
     }
     set description(value: string) {
         this._description = value;
-    }
-
-    get age(): number {
-        return this._age;
-    }
-    set age(value: number) {
-        this._age = value;
     }
 
     get experience(): number {
@@ -139,6 +129,6 @@ export class Helper {
     }
 
     toString(): string {
-        return `Helper ID: ${this._H_id}, Company ID: ${this._C_id}, Name: ${this._firstname} ${this._lastname}, Description: ${this._description}, Age: ${this._age}, Experience: ${this.getFormatedExperience()}, Email: ${this._email}, Phone: ${this._phone}, Image ID: ${this._I_id}`;
+        return `Helper ID: ${this._H_id}, Company ID: ${this._C_id}, Name: ${this._firstname} ${this._lastname}, Description: ${this._description}, Experience: ${this.getFormatedExperience()}, Email: ${this._email}, Phone: ${this._phone}, Image ID: ${this._I_id}`;
     }
 }

@@ -23,12 +23,12 @@ INSERT INTO Users (Firstname, Lastname, Email, Password, Phone) VALUES
 ('Ethan', 'Frost', 'ethan@example.com', 'pass123', '7778889999');
 
 -- 4. Insert into Helpers
-INSERT INTO Helpers (HC_id, C_id, Firstname, Lastname, Description, Age, Experience, Phone, Email, Password) VALUES
-(1014, 1002, 'Tom', 'Jones', 'Expert electrician', 35, 120, '1010101010', 'tom@example.com', 'pass123'),
-(1015, 1003, 'Laura', 'Hill', 'Experienced plumber', 42, 180, '2020202020', 'laura@example.com', 'pass123'),
-(1016, 1004, 'Mike', 'Snow', 'Fast and efficient cleaner', 28, 60, '3030303030', 'mike@example.com', 'pass123'),
-(1017, 1005, 'Nina', 'Stone', 'Gardener with a green thumb', 33, 72, '4040404040', 'nina@example.com', 'pass123'),
-(1018, 1006, 'Oscar', 'Grey', 'Professional painter', 40, 150, '5050505050', 'oscar@example.com', 'pass123');
+INSERT INTO Helpers (HC_id, C_id, Firstname, Lastname, Description, Experience, Phone, Email, Password) VALUES
+(1014, 1002, 'Tom', 'Jones', 'Expert electrician', 120, '1010101010', 'tom@example.com', 'pass123'),
+(1015, 1003, 'Laura', 'Hill', 'Experienced plumber', 180, '2020202020', 'laura@example.com', 'pass123'),
+(1016, 1004, 'Mike', 'Snow', 'Fast and efficient cleaner', 60, '3030303030', 'mike@example.com', 'pass123'),
+(1017, 1005, 'Nina', 'Stone', 'Gardener with a green thumb', 72, '4040404040', 'nina@example.com', 'pass123'),
+(1018, 1006, 'Oscar', 'Grey', 'Professional painter', 150, '5050505050', 'oscar@example.com', 'pass123');
 
 -- 6. Insert into Reviews
 INSERT INTO Reviews (H_id, Title, Description, U_id, Rating) VALUES
