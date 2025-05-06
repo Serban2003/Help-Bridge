@@ -21,27 +21,27 @@ export class Company {
         this._C_id = value;
     }
 
-    get name(): string {
+    get Name(): string {
         return this._name;
     }
 
-    set name(value: string) {
+    set Name(value: string) {
         this._name = value;
     }
 
-    get description(): string {
+    get Description(): string {
         return this._description;
     }
 
-    set description(value: string) {
+    set Description(value: string) {
         this._description = value;
     }
 
-    get address(): string {
+    get Address(): string {
         return this._address;
     }
 
-    set address(value: string) {
+    set Address(value: string) {
         this._address = value;
     }
 

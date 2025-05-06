@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import AccountSetupModal from "./AccountSetupModal";
 import RegisterStatusModal from "./RegisterStatusModal";
+import { useAuth } from "@/app/models/AuthContext";
 
 import "./LoginRegisterModal.css";
 import "./../globals.css";
@@ -30,6 +31,7 @@ interface LoginRegisterModalProps {
 }
 
 const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
+  const { login } = useAuth();
   const [key, setKey] = useState("login");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -97,7 +99,7 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
         setLoginSuccessMessage("");
         return;
       }
-
+      login(result); // use context
       setLoginErrorMessage("");
       setLoginSuccessMessage("Login successful!");
 
@@ -116,7 +118,7 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
     }
   };
 
-  const handleRegisterClick = () => {
+  const handleRegisterClick = async () => {
     let hasError = false;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -149,6 +151,29 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
 
     if (hasError) return;
 
+    // 🔒 Check if email already exists in either table
+    try {
+      const userCheck = await fetch(
+        `http://localhost:5000/api/users?email=${encodeURIComponent(
+          registerEmail
+        )}`
+      );
+      const helperCheck = await fetch(
+        `http://localhost:5000/api/helpers?email=${encodeURIComponent(
+          registerEmail
+        )}`
+      );
+
+      if (userCheck.ok || helperCheck.ok) {
+        setRegisterEmailError("An account with this email already exists.");
+        return;
+      }
+    } catch (err) {
+      console.error("Email check failed:", err);
+      setRegisterEmailError("Something went wrong while checking email.");
+      return;
+    }
+
     handleClose();
     resetForm();
     setShowAccountSetupModal(true);
@@ -166,6 +191,9 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
     setLoginPasswordError("");
     setLoginErrorMessage("");
     setLoginSuccessMessage("");
+    setRegisterEmailError("");
+    setRegisterPasswordError("");
+    setRegisterConfirmPasswordError("");
   };
 
   return (
@@ -195,6 +223,7 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
                     <Mail size={16} className="me-2" /> Email address
                   </Form.Label>
                   <Form.Control
+                    autoFocus
                     type="email"
                     placeholder="Enter email"
                     value={loginEmail}
@@ -426,6 +455,8 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
         handleClose={() => setShowAccountSetupModal(false)}
         onSetupComplete={handleFinishSetup}
         registerRole={registerRole}
+        registerEmail={registerEmail}
+        registerPassword={registerPassword}
       />
 
       <RegisterStatusModal

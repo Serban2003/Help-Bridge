@@ -49,52 +49,52 @@ export class Helper {
         this._C_id = value;
     }
 
-    get firstname(): string {
+    get Firstname(): string {
         return this._firstname;
     }
-    set firstname(value: string) {
+    set Firstname(value: string) {
         this._firstname = value;
     }
 
-    get lastname(): string {
+    get Lastname(): string {
         return this._lastname;
     }
-    set lastname(value: string) {
+    set Lastname(value: string) {
         this._lastname = value;
     }
 
-    get description(): string {
+    get Description(): string {
         return this._description;
     }
-    set description(value: string) {
+    set Description(value: string) {
         this._description = value;
     }
 
-    get experience(): number {
+    get Experience(): number {
         return this._experience;
     }
-    set experience(value: number) {
+    set Experience(value: number) {
         this._experience = value;
     }
 
-    get email(): string {
+    get Email(): string {
         return this._email;
     }
-    set email(value: string) {
+    set Email(value: string) {
         this._email = value;
     }
 
-    get password(): string {
+    get Password(): string {
         return this._password;
     }
-    set password(value: string) {
+    set Password(value: string) {
         this._password = value;
     }
 
-    get phone(): string {
+    get Phone(): string {
         return this._phone;
     }
-    set phone(value: string) {
+    set Phone(value: string) {
         this._phone = value;
     }
 
@@ -104,20 +104,20 @@ export class Helper {
     set I_id(value: number | null) {
         this._I_id = value;
     }
-    get ts_created(): Date {
+    get Ts_created(): Date {
         return this._ts_created;
     }
-    set ts_created(value: Date) {
+    set Ts_created(value: Date) {
         this._ts_created = value;
     }
 
     getFullName(): string {
-        return `${this.firstname} ${this.lastname}`;
+        return `${this.Firstname} ${this.Lastname}`;
     }
 
     getFormatedExperience(): string {
-        var years = Math.floor(this.experience / 12);
-        var months = this.experience % 12;
+        var years = Math.floor(this.Experience / 12);
+        var months = this.Experience % 12;
         
         var yearsStr = years > 1 ? "years" : "year";
         var monthsStr = months > 1 ? "months" : "month";

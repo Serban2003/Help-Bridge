@@ -27,43 +27,43 @@ export class User {
         this._U_id = value;
     }
 
-    get firstname(): string {
+    get Firstname(): string {
         return this._firstname;
     }
 
-    set firstname(value: string) {
+    set Firstname(value: string) {
         this._firstname = value;
     }
 
-    get lastname(): string {
+    get Fastname(): string {
         return this._lastname;
     }
 
-    set lastname(value: string) {
+    set Fastname(value: string) {
         this._lastname = value;
     }
 
-    get email(): string {
+    get Email(): string {
         return this._email;
     }
 
-    set email(value: string) {
+    set Email(value: string) {
         this._email = value;
     }
 
-    get password(): string {
+    get Password(): string {
         return this._password;
     }
 
-    set password(value: string) {
+    set Password(value: string) {
         this._password = value;
     }
 
-    get phone(): string {
+    get Phone(): string {
         return this._phone;
     }
 
-    set phone(value: string) {
+    set Phone(value: string) {
         this._phone = value;
     }
 
@@ -75,15 +75,15 @@ export class User {
         this._I_id = value;
     }
 
-    get ts_created(): Date {
+    get Ts_created(): Date {
         return this._ts_created;
     }
-    set ts_created(value: Date) {
+    set Ts_created(value: Date) {
         this._ts_created = value;
     }
 
     getFullName(): string {
-        return `${this.firstname} ${this.lastname}`;
+        return `${this.Firstname} ${this.Fastname}`;
     }
 
     toString(): string {

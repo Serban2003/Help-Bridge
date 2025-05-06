@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/app/models/AuthContext";
 import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -7,14 +8,20 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Button from "react-bootstrap/Button";
 import LoginRegisterModal from "./LoginRegisterModal";
-
+import { useRouter } from "next/navigation";
 import "./MainNavbar.css";
 
 export const MainNavbar = () => {
+  const { auth, logout } = useAuth();
   const [showLoginRegisterModal, setShowLoginRegisterModal] = useState(false);
 
   const handleShow = () => setShowLoginRegisterModal(true);
   const handleClose = () => setShowLoginRegisterModal(false);
+  
+  const router = useRouter();
+  const goToSettings = () => {
+    router.push("/settings");
+  };
 
   return (
     <>
@@ -33,16 +40,30 @@ export const MainNavbar = () => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <Nav.Link href="/" className="link-text-white">Home</Nav.Link>
-              <Nav.Link href="/about" className="link-text-white">About</Nav.Link>
               <NavDropdown title="Find help" id="help-nav-dropdown" className="link-text-white">
                 <NavDropdown.Item href="/search?category=Financial">Financial</NavDropdown.Item>
                 <NavDropdown.Item href="/search?category=Psychological">Psychological</NavDropdown.Item>
                 <NavDropdown.Item href="/search?category=IT">IT</NavDropdown.Item>
               </NavDropdown>
             </Nav>
-            <Button className="btn-light" onClick={handleShow}>
-              Login
-            </Button>
+            {/* Conditional button based on login */}
+            {auth ? (
+              <>
+                <span className="text-white me-3">
+                  Welcome, {auth.data.Firstname}!
+                </span>
+                <Button variant="light me-3" onClick={goToSettings}>
+                  Settings
+                </Button>
+                <Button variant="outline-light" onClick={logout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button className="btn-light" onClick={handleShow}>
+                Login
+              </Button>
+            )}
           </Navbar.Collapse>
         </Container>
       </Navbar>

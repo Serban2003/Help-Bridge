@@ -17,19 +17,19 @@ export class HelperCategory{
         return this._HC_id;
     }
 
-    set name(value: string) {
+    set Name(value: string) {
         this._name = value;
     }
 
-    get name(): string {
+    get Name(): string {
         return this._name;
     }
 
-    set description(value: string) {    
+    set Description(value: string) {    
         this._description = value;
     }
 
-    get description(): string {
+    get Description(): string {
         return this._description;
     }
 

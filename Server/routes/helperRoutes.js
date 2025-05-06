@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {getAllHelpers, getHelperByEmail, getHelpersByHelperCategoryId, createHelper } from "../controllers/helperController.js";
-  
+
 const router = Router();
 // If is is present in query, use id filter, else return all
 router.get("/", (req, res) => {

@@ -3,8 +3,8 @@ import { sql, dbConfig } from "../dbConfig.js";
 export class HelperCategory {
     constructor(HC_id, name, description) {
         this.HC_id = HC_id;
-        this.name = name;
-        this.description = description;
+        this.Name = name;
+        this.Description = description;
     }
   }
   

@@ -1,4 +1,5 @@
 import { sql, dbConfig } from "../dbConfig.js";
+import bcrypt from "bcrypt";
 
 export class Helper {
     constructor(H_id, HC_id, C_id, firstname, lastname, description, experience, email, password, phone, I_id = null, ts_created = null) {
@@ -46,11 +47,13 @@ export const getAllHelpers = async (req, res) => {
   
 export const createHelper = async (req, res) => {
     const { HC_id, C_id, firstname, lastname, description, experience, email, password, phone, I_id = null } = req.body;
+    const saltRounds = 10; // Higher = more secure, but slower
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     try {
       await sql.connect(dbConfig);
       await sql.query`
         INSERT INTO Helpers (HC_id, C_id, Firstname, Lastname, Description, Experience, Email, Password, Phone, I_id)
-        VALUES (${HC_id}, ${C_id}, ${firstname}, ${lastname}, ${description}, ${experience}, ${email}, ${password}, ${phone}, ${I_id})`;
+        VALUES (${HC_id}, ${C_id}, ${firstname}, ${lastname}, ${description}, ${experience}, ${email}, ${hashedPassword}, ${phone}, ${I_id})`;
       res.status(201).send("Helper created successfully");
     } catch (err) {
       console.error("POST /helpers error:", err);
