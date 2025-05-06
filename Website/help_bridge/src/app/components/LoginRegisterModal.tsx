@@ -8,6 +8,7 @@ import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
+import InputGroup from "react-bootstrap/InputGroup";
 import {
   User,
   HelpingHand,
@@ -19,7 +20,6 @@ import {
 } from "lucide-react";
 import AccountSetupModal from "./AccountSetupModal";
 import RegisterStatusModal from "./RegisterStatusModal";
-import InputGroup from "react-bootstrap/InputGroup";
 
 import "./LoginRegisterModal.css";
 import "./../globals.css";
@@ -31,13 +31,15 @@ interface LoginRegisterModalProps {
 
 const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
   const [key, setKey] = useState("login");
-  const [registerRole, setRegisterRole] = useState("user");
-
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginPasswordVisible, setLoginPasswordVisible] = useState(false);
   const [loginEmailError, setLoginEmailError] = useState("");
   const [loginPasswordError, setLoginPasswordError] = useState("");
+  const [loginErrorMessage, setLoginErrorMessage] = useState("");
+  const [loginSuccessMessage, setLoginSuccessMessage] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [registerRole, setRegisterRole] = useState("user");
 
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
@@ -53,14 +55,9 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
 
   const [showAccountSetupModal, setShowAccountSetupModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const handleFinishSetup = () => {
-    setShowAccountSetupModal(false);
-    setShowSuccessModal(true);
-  };
 
-  const handleLoginClick = () => {
+  const handleLoginClick = async () => {
     let hasError = false;
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!loginEmail) {
@@ -82,13 +79,45 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
 
     if (hasError) return;
 
-    // All good
-    handleClose();
+    try {
+      setIsLoggingIn(true);
+
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setLoginErrorMessage(result.message || "Login failed.");
+        setLoginSuccessMessage("");
+        return;
+      }
+
+      setLoginErrorMessage("");
+      setLoginSuccessMessage("Login successful!");
+
+      // Show success message for 2 seconds before closing
+      setTimeout(() => {
+        setLoginSuccessMessage("");
+        handleClose();
+        resetForm();
+      }, 1000);
+    } catch (error) {
+      console.error("Login error:", error);
+      setLoginErrorMessage("Something went wrong. Please try again.");
+      setLoginSuccessMessage("");
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
 
   const handleRegisterClick = () => {
     let hasError = false;
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!registerEmail) {
@@ -120,40 +149,50 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
 
     if (hasError) return;
 
-    // All good
     handleClose();
     resetForm();
     setShowAccountSetupModal(true);
   };
 
+  const handleFinishSetup = () => {
+    setShowAccountSetupModal(false);
+    setShowSuccessModal(true);
+  };
+
   const resetForm = () => {
     setLoginEmail("");
     setLoginPassword("");
-    setRegisterEmail("");
-    setRegisterPassword("");
-    setRegisterConfirmPassword("");
+    setLoginEmailError("");
+    setLoginPasswordError("");
+    setLoginErrorMessage("");
+    setLoginSuccessMessage("");
   };
 
   return (
     <>
-      <Modal show={show} onHide={handleClose} centered>
+      <Modal
+        show={show}
+        onHide={() => {
+          handleClose();
+          resetForm();
+        }}
+        centered
+      >
         <Modal.Body>
           <Tabs
-            id="login-register-tabs"
             activeKey={key}
-            onSelect={(k) => setKey(k || "login")}
+            onSelect={(k) => {
+              setKey(k || "login");
+              resetForm();
+            }}
             className="mb-3 custom-tabs"
             justify
           >
-            {/* Login Tab */}
             <Tab eventKey="login" title="Login">
               <Form>
-                {/* Email and Password */}
                 <Form.Group className="mb-3" controlId="loginEmail">
                   <Form.Label>
-                    {" "}
-                    <Mail size={16} className="me-2" />
-                    Email address
+                    <Mail size={16} className="me-2" /> Email address
                   </Form.Label>
                   <Form.Control
                     type="email"
@@ -169,8 +208,7 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
 
                 <Form.Group className="mb-3" controlId="loginPassword">
                   <Form.Label>
-                    <Lock size={16} className="me-2" />
-                    Password
+                    <Lock size={16} className="me-2" /> Password
                   </Form.Label>
                   <InputGroup>
                     <Form.Control
@@ -204,18 +242,38 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
                 <Button
                   variant="primary"
                   type="button"
-                  className="w-100 custom-button"
+                  className="w-100 custom-button d-flex justify-content-center align-items-center"
                   onClick={handleLoginClick}
+                  disabled={isLoggingIn}
                 >
-                  Login
+                  {isLoggingIn ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                      />
+                      Logging in...
+                    </>
+                  ) : (
+                    "Login"
+                  )}
                 </Button>
+
+                {loginErrorMessage && (
+                  <div className="text-danger text-center mt-2">
+                    {loginErrorMessage}
+                  </div>
+                )}
+                {loginSuccessMessage && (
+                  <div className="text-success text-center mt-2">
+                    {loginSuccessMessage}
+                  </div>
+                )}
               </Form>
             </Tab>
-
             {/* Register Tab */}
             <Tab eventKey="register" title="Register">
               <Form>
-                {/* Role Selection */}
                 <Form.Group className="mb-3 text-center">
                   <div className="d-flex align-items-center justify-content-between gap-3">
                     <Form.Label className="mb-0">Select Role</Form.Label>
@@ -234,8 +292,7 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
                             : "toggle-button-custom"
                         }`}
                       >
-                        <User size={18} />
-                        User
+                        <User size={18} /> User
                       </ToggleButton>
                       <ToggleButton
                         id="register-helper"
@@ -251,17 +308,14 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
                             : "toggle-button-custom"
                         }`}
                       >
-                        <HelpingHand size={18} />
-                        Helper
+                        <HelpingHand size={18} /> Helper
                       </ToggleButton>
                     </ButtonGroup>
                   </div>
                 </Form.Group>
 
-                {/* Email, Password, Confirm Password */}
                 <Form.Group className="mb-3" controlId="registerEmail">
                   <Form.Label>
-                    {" "}
                     <Mail size={16} className="me-2" />
                     Email address
                   </Form.Label>
@@ -367,7 +421,6 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
           </Tabs>
         </Modal.Body>
       </Modal>
-
       <AccountSetupModal
         show={showAccountSetupModal}
         handleClose={() => setShowAccountSetupModal(false)}

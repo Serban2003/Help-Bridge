@@ -96,3 +96,7 @@ a {
 .bg-secondary{
   background-color: var(--secondary-color) !important;
 }
+
+.modal-open {
+  padding-right: 0 !important;
+}

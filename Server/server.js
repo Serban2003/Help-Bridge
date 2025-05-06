@@ -7,12 +7,13 @@ import reviewRoutes from "./routes/reviewRoutes.js";
 import helperRoutes from "./routes/helperRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 import profileImageRoutes from "./routes/profileImageRoutes.js";
-
+import loginRoutes from "./routes/loginRoutes.js";
 const app = express();
 app.use(cors());
 app.use(json());
 
 app.use("/api/users", userRoutes);
+app.use("/api/login", loginRoutes); 
 app.use("/api/companies", companyRoutes);
 app.use("/api/helper_categories", helperCategoryRoutes);
 app.use("/api/reviews", reviewRoutes);
