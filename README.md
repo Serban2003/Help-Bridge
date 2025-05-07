@@ -17,7 +17,7 @@ npm run build
 ```
 cd ..\..\Server\
 npm install bcrypt
-npm I
+npm i
 ```
 8. Install the database by using the script provided in the Database folder
 9. Populate the database by using the script provided in the Database folder (may require ID changes)
