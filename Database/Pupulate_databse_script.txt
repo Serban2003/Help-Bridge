@@ -24,24 +24,24 @@ INSERT INTO Users (Firstname, Lastname, Email, Password, Phone) VALUES
 
 -- 4. Insert into Helpers
 INSERT INTO Helpers (HC_id, C_id, Firstname, Lastname, Description, Experience, Phone, Email, Password) VALUES
-(1014, 1002, 'Tom', 'Jones', 'Expert electrician', 120, '1010101010', 'tom@example.com', 'pass123'),
-(1015, 1003, 'Laura', 'Hill', 'Experienced plumber', 180, '2020202020', 'laura@example.com', 'pass123'),
-(1016, 1004, 'Mike', 'Snow', 'Fast and efficient cleaner', 60, '3030303030', 'mike@example.com', 'pass123'),
-(1017, 1005, 'Nina', 'Stone', 'Gardener with a green thumb', 72, '4040404040', 'nina@example.com', 'pass123'),
-(1018, 1006, 'Oscar', 'Grey', 'Professional painter', 150, '5050505050', 'oscar@example.com', 'pass123');
+(1, 1, 'Tom', 'Jones', 'Expert electrician', 120, '1010101010', 'tom@example.com', 'pass123'),
+(2, 2, 'Laura', 'Hill', 'Experienced plumber', 180, '2020202020', 'laura@example.com', 'pass123'),
+(3, 3, 'Mike', 'Snow', 'Fast and efficient cleaner', 60, '3030303030', 'mike@example.com', 'pass123'),
+(4, 4, 'Nina', 'Stone', 'Gardener with a green thumb', 72, '4040404040', 'nina@example.com', 'pass123'),
+(5, 5, 'Oscar', 'Grey', 'Professional painter', 150, '5050505050', 'oscar@example.com', 'pass123');
 
 -- 6. Insert into Reviews
 INSERT INTO Reviews (H_id, Title, Description, U_id, Rating) VALUES
-(1004, 'Great Job!', 'Tom fixed all our wiring issues.', 1, 5.0),
-(1005, 'Very Reliable', 'Laura repaired a major leak quickly.', 2, 4.8),
-(1006, 'Clean & Quick', 'Mike cleaned our house well.', 3, 4.5),
-(1007, 'Green Touch', 'Nina revived our garden beautifully.', 4, 5.0),
-(1008, 'Vivid Colors', 'Oscar painted our home wonderfully.', 5, 4.9);
+(1, 'Great Job!', 'Tom fixed all our wiring issues.', 1, 5.0),
+(2, 'Very Reliable', 'Laura repaired a major leak quickly.', 2, 4.8),
+(3, 'Clean & Quick', 'Mike cleaned our house well.', 3, 4.5),
+(4, 'Green Touch', 'Nina revived our garden beautifully.', 4, 5.0),
+(5, 'Vivid Colors', 'Oscar painted our home wonderfully.', 5, 4.9);
 
 -- 7. Insert into Appointments
 INSERT INTO Appointments (H_id, Title, Message, Date, U_id, R_id) VALUES
-(1004, 'Wiring Check', 'Need a check on living room lights.', '2025-05-01 10:00:00', 2, 1004),
-(1005, 'Pipe Fix', 'Urgent bathroom leak.', '2025-05-02 14:00:00', 3, 1005),
-(1006, 'Weekly Cleaning', 'Please clean all rooms.', '2025-05-03 09:00:00', 4, 1006),
-(1007, 'Garden Refresh', 'Backyard plants need care.', '2025-05-04 11:00:00', 5, 1007),
-(1008, 'Paint Living Room', 'We want to repaint the walls.', '2025-05-05 13:00:00', 6, 1008);
+(1, 'Wiring Check', 'Need a check on living room lights.', '2025-05-01 10:00:00', 1, 1),
+(2, 'Pipe Fix', 'Urgent bathroom leak.', '2025-05-02 14:00:00', 2, 2),
+(3, 'Weekly Cleaning', 'Please clean all rooms.', '2025-05-03 09:00:00', 3, 3),
+(4, 'Garden Refresh', 'Backyard plants need care.', '2025-05-04 11:00:00', 4, 4),
+(5, 'Paint Living Room', 'We want to repaint the walls.', '2025-05-05 13:00:00', 5, 5);
