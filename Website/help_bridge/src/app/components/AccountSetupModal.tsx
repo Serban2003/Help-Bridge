@@ -48,6 +48,7 @@ const AccountSetupModal = ({
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [description, setDescription] = useState("");
   const [experience, setExperience] = useState("");
   const [selectedCompany, setSelectedCompany] = useState("");
@@ -55,6 +56,11 @@ const AccountSetupModal = ({
   const [customCompanyName, setCustomCompanyName] = useState("");
   const [customCompanyDescription, setCustomCompanyDescription] = useState("");
   const [customCompanyAddress, setCustomCompanyAddress] = useState("");
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [companyLogo, setCompanyLogo] = useState<File | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const phoneRegex =
+    /^(\+?[1-9]{1,3}\s?)?(\(?\d{3}\)?)?[\s-]?\d{3}[\s-]?\d{4}$/;
 
   useEffect(() => {
     if (show && registerRole === "helper") {
@@ -79,8 +85,35 @@ const AccountSetupModal = ({
       return;
     }
 
+    // Phone format validation
+    if (!phoneRegex.test(phone)) {
+      setPhoneError("Invalid phone number format.");
+      setValidated(true);
+      return;
+    } else {
+      setPhoneError(""); // Clear any previous errors
+    }
+
+    let registerSuccess = false;
+    let profileImageId: number | null = null;
+    let companyLogoId: number | null = null;
+    let finalCompanyId = null;
+
     try {
-      let registerSuccess = false;
+      if (profileImage) {
+        const imageFormData = new FormData();
+        imageFormData.append("image", profileImage);
+
+        const imageResponse = await fetch("http://localhost:5000/api/images", {
+          method: "POST",
+          body: imageFormData,
+        });
+
+        if (!imageResponse.ok) throw new Error("Image upload failed.");
+        const imageData = await imageResponse.json();
+        profileImageId = imageData.I_id;
+        console.log("Image ID:", profileImageId);
+      }
 
       if (registerRole === "user") {
         const user = new UserModel(
@@ -90,7 +123,7 @@ const AccountSetupModal = ({
           registerEmail,
           registerPassword,
           phone,
-          null,
+          profileImageId,
           new Date()
         );
 
@@ -103,16 +136,35 @@ const AccountSetupModal = ({
             email: user.Email,
             password: user.Password,
             phone: user.Phone,
+            I_id: user.I_id,
           }),
         });
 
         if (!userRes.ok) throw new Error("User registration failed.");
         registerSuccess = true;
       } else {
-        let finalCompanyId =
+        finalCompanyId =
           selectedCompany === "other" ? 0 : parseInt(selectedCompany);
 
         if (selectedCompany === "other") {
+          if (companyLogo) {
+            const imageFormData = new FormData();
+            imageFormData.append("image", companyLogo);
+
+            const imageResponse = await fetch(
+              "http://localhost:5000/api/images",
+              {
+                method: "POST",
+                body: imageFormData,
+              }
+            );
+
+            if (!imageResponse.ok) throw new Error("Image upload failed.");
+            const imageData = await imageResponse.json();
+            companyLogoId = imageData.I_id;
+            console.log("Image ID:", companyLogoId);
+          }
+
           const companyResponse = await fetch(
             "http://localhost:5000/api/companies",
             {
@@ -122,6 +174,7 @@ const AccountSetupModal = ({
                 name: customCompanyName,
                 description: customCompanyDescription,
                 address: customCompanyAddress,
+                I_id: companyLogoId,
               }),
             }
           );
@@ -142,7 +195,7 @@ const AccountSetupModal = ({
           registerEmail,
           registerPassword,
           phone,
-          null,
+          profileImageId,
           new Date()
         );
 
@@ -159,6 +212,7 @@ const AccountSetupModal = ({
             experience: helper.Experience,
             HC_id: helper.HC_id,
             C_id: helper.C_id,
+            I_id: helper.I_id,
           }),
         });
 
@@ -188,7 +242,59 @@ const AccountSetupModal = ({
         resetForm();
       }
     } catch (err) {
-      alert("Registration failed. Please try again.");
+      // Attempt to delete the uploaded image if registration fails
+      if (profileImageId) {
+        try {
+          await fetch(`http://localhost:5000/api/images?id=${profileImageId}`, {
+            method: "DELETE",
+          });
+        } catch (deleteErr) {
+          console.error("Failed to delete uploaded profile image:", deleteErr);
+        }
+      }
+
+      // Attempt to delete the uploaded company logo if registration fails
+      if (companyLogoId) {
+        try {
+          await fetch(`http://localhost:5000/api/images?id=${companyLogoId}`, {
+            method: "DELETE",
+          });
+        } catch (deleteErr) {
+          console.error("Failed to delete uploaded company logo:", deleteErr);
+        }
+      }
+
+      // Attempt to delete the newly created company if registration fails
+      if (finalCompanyId) {
+        try {
+          await fetch(
+            `http://localhost:5000/api/companies?id=${finalCompanyId}`,
+            {
+              method: "DELETE",
+            }
+          );
+        } catch (deleteErr) {
+          console.error("Failed to delete created company:", deleteErr);
+        }
+      }
+
+      let errorMsg = "Registration failed. Please try again.";
+      if (err instanceof Error) {
+        if (err.message.includes("Image upload failed")) {
+          errorMsg = "Profile image upload failed. Please try again.";
+        } else if (err.message.includes("User registration failed")) {
+          errorMsg = "User registration failed. Please verify your details.";
+        } else if (err.message.includes("Helper registration failed")) {
+          errorMsg =
+            "Helper registration failed. Please check the form and try again.";
+        } else if (err.message.includes("Company creation failed")) {
+          errorMsg = "Company registration failed. Please check your inputs.";
+        }
+      } else {
+        errorMsg = "An unexpected error occurred. Please try again.";
+      }
+
+      setErrorMessage(errorMsg);
       console.error(err);
     }
   };
@@ -197,6 +303,7 @@ const AccountSetupModal = ({
     setFirstname("");
     setLastname("");
     setPhone("");
+    setPhoneError("");
     setDescription("");
     setExperience("");
     setSelectedCompany("");
@@ -204,9 +311,12 @@ const AccountSetupModal = ({
     setCustomCompanyName("");
     setCustomCompanyDescription("");
     setCustomCompanyAddress("");
+    setProfileImage(null);
+    setCompanyLogo(null);
+    setErrorMessage(null); // Clear error message
     setValidated(false);
   };
-
+  
   return (
     <Modal show={show} onHide={handleClose} backdrop="static" centered>
       <Modal.Header>
@@ -251,7 +361,11 @@ const AccountSetupModal = ({
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              isInvalid={!!phoneError}
             />
+            <Form.Control.Feedback type="invalid">
+              {phoneError || "Please enter your phone number."}
+            </Form.Control.Feedback>
           </Form.Group>
 
           {registerRole === "helper" && (
@@ -319,7 +433,7 @@ const AccountSetupModal = ({
               </Form.Group>
 
               {selectedCompany === "other" && (
-                <div className="border p-3 bg-light rounded">
+                <div className="border p-3 bg-light rounded mb-3">
                   <Form.Group
                     className="mb-3"
                     controlId="formCustomCompanyName"
@@ -361,11 +475,34 @@ const AccountSetupModal = ({
                       onChange={(e) => setCustomCompanyAddress(e.target.value)}
                     />
                   </Form.Group>
+                  <Form.Group className="mb-3" controlId="formCompanyLogo">
+                    <Form.Label>Upload Company Logo</Form.Label>
+                    <Form.Control
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        setCompanyLogo(
+                          (e.target as HTMLInputElement).files?.[0] || null
+                        )
+                      }
+                    />
+                  </Form.Group>
                 </div>
               )}
             </>
           )}
-
+          <Form.Group className="mb-3" controlId="formProfileImage">
+            <Form.Label>Upload Profile Image</Form.Label>
+            <Form.Control
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setProfileImage(
+                  (e.target as HTMLInputElement).files?.[0] || null
+                )
+              }
+            />
+          </Form.Group>
           <div className="d-flex justify-content-center gap-3 mt-4">
             <Button
               variant="danger"
@@ -383,6 +520,11 @@ const AccountSetupModal = ({
               Submit
             </Button>
           </div>
+          {errorMessage && (
+             <p className="text-danger text-center mt-2 pb-0">
+             {errorMessage}
+           </p>
+          )}
         </Form>
       </Modal.Body>
     </Modal>

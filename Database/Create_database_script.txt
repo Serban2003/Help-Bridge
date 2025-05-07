@@ -34,7 +34,7 @@ create table dbo.Profile_Images
     I_id int identity
         constraint Profile_Images_pk
             primary key,
-    Name varchar(50)    not null,
+    Name varchar(255)    not null,
     Data varbinary(max) not null
 )
 go

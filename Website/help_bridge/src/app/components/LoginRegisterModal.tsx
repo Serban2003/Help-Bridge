@@ -95,15 +95,16 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
       const result = await response.json();
 
       if (!response.ok) {
-        setLoginErrorMessage(result.message || "Login failed.");
+        const errorMsg = result.message || "Login failed. Please check your credentials.";
+        setLoginErrorMessage(errorMsg);
         setLoginSuccessMessage("");
         return;
       }
-      login(result); // use context
+    
+      login(result);
       setLoginErrorMessage("");
       setLoginSuccessMessage("Login successful!");
-
-      // Show success message for 2 seconds before closing
+    
       setTimeout(() => {
         setLoginSuccessMessage("");
         handleClose();
@@ -111,7 +112,7 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
       }, 1000);
     } catch (error) {
       console.error("Login error:", error);
-      setLoginErrorMessage("Something went wrong. Please try again.");
+      setLoginErrorMessage("Network error. Please try again later.");
       setLoginSuccessMessage("");
     } finally {
       setIsLoggingIn(false);
@@ -170,7 +171,6 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
       }
     } catch (err) {
       console.error("Email check failed:", err);
-      setRegisterEmailError("Something went wrong while checking email.");
       return;
     }
 
@@ -194,7 +194,11 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
     setRegisterEmailError("");
     setRegisterPasswordError("");
     setRegisterConfirmPasswordError("");
+    setRegisterEmail("");
+    setRegisterPassword("");
+    setRegisterConfirmPassword("");
   };
+  
 
   return (
     <>
@@ -445,6 +449,12 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
                 >
                   Register
                 </Button>
+
+                {registerEmailError && (
+  <p className="text-danger text-center mt-2 pb-0">
+    {registerEmailError}
+  </p>
+)}
               </Form>
             </Tab>
           </Tabs>

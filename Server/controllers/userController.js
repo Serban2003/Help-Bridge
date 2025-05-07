@@ -52,7 +52,7 @@ export const createUser = async (req, res) => {
   try {
     const saltRounds = 10; // Higher = more secure, but slower
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
+    console.log(I_id);
     await sql.connect(dbConfig);
     await sql.query`
         INSERT INTO Users (Firstname, Lastname, Email, Password, Phone, I_id)
