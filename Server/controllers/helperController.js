@@ -6,15 +6,15 @@ export class Helper {
         this.H_id = H_id;
         this.HC_id = HC_id;
         this.C_id = C_id;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.description = description;
-        this.experience = experience;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
+        this.Firstname = firstname;
+        this.Lastname = lastname;
+        this.Description = description;
+        this.Experience = experience;
+        this.Email = email;
+        this.Password = password;
+        this.Phone = phone;
         this.I_id = I_id;
-        this.ts_created = ts_created;
+        this.Ts_created = ts_created;
     }
   }
   

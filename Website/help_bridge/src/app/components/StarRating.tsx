@@ -7,9 +7,16 @@ interface StarRatingProps {
   onRate?: (value: number) => void;
   max?: number;
   editable?: boolean;
+  noRatingMessage?: string;
 }
 
-const StarRating = ({ rating, onRate, max = 5, editable = false }: StarRatingProps) => {
+const StarRating = ({ 
+  rating, 
+  onRate, 
+  max = 5, 
+  editable = false, 
+  noRatingMessage = "No rating available" 
+}: StarRatingProps) => {
   const [hovered, setHovered] = useState<number | null>(null);
 
   const handleClick = (value: number) => {
@@ -17,6 +24,10 @@ const StarRating = ({ rating, onRate, max = 5, editable = false }: StarRatingPro
   };
 
   const renderStars = () => {
+    if (rating === 0) {
+      return <span className="no-rating-message text-muted">{noRatingMessage}</span>;
+    }
+
     const stars = [];
     const activeRating = hovered ?? rating;
 
@@ -46,7 +57,11 @@ const StarRating = ({ rating, onRate, max = 5, editable = false }: StarRatingPro
     return stars;
   };
 
-  return <div className="d-flex justify-content-start">{renderStars()}</div>;
+  return (
+    <div className="d-flex justify-content-start align-items-center star-rating">
+      {renderStars()}
+    </div>
+  );
 };
 
 export default StarRating;

@@ -125,6 +125,13 @@ export class Helper {
         if (years === 0 && months === 0) {
             return "No experience";
         }
+
+        if (years === 0) {
+            return `${months} ${monthsStr}`;
+        }
+        if (months === 0) {
+            return `${years} ${yearsStr}`;
+        }
         return `${years} ${yearsStr} and ${months} ${monthsStr}`;
     }
 
@@ -132,3 +139,21 @@ export class Helper {
         return `Helper ID: ${this._H_id}, Company ID: ${this._C_id}, Name: ${this._firstname} ${this._lastname}, Description: ${this._description}, Experience: ${this.getFormatedExperience()}, Email: ${this._email}, Phone: ${this._phone}, Image ID: ${this._I_id}`;
     }
 }
+
+export const transformToHelper = (data: any): Helper => {
+    return new Helper(
+      data.H_id,
+      data.HC_id,
+      data.C_id,
+      data.Firstname,
+      data.Lastname,
+      data.Description,
+      data.Experience,
+      data.Email,
+      data.Password,
+      data.Phone,
+      data.I_id,
+      new Date(data.Ts_created)
+    );
+  };
+  

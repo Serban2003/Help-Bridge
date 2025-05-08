@@ -35,28 +35,28 @@ export class Review {
     set U_id(value: number) {
         this._U_id = value;
     }
-    get title(): string {
+    get Title(): string {
         return this._title;
     }
-    set title(value: string) {
+    set Title(value: string) {
         this._title = value;
     }
-    get description(): string {
+    get Description(): string {
         return this._description;
     }
-    set description(value: string) {
+    set Description(value: string) {
         this._description = value;
     }
-    get rating(): number {
+    get Rating(): number {
         return this._rating;
     }
-    set rating(value: number) {
+    set Rating(value: number) {
         this._rating = value;
     }
-    get ts_created(): Date {
+    get Ts_created(): Date {
         return this._ts_created;
     }
-    set ts_created(value: Date) {
+    set Ts_created(value: Date) {
         this._ts_created = value;
     }
 }

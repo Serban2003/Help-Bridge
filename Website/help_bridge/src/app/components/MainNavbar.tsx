@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/app/models/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -14,14 +14,30 @@ import "./MainNavbar.css";
 export const MainNavbar = () => {
   const { auth, logout } = useAuth();
   const [showLoginRegisterModal, setShowLoginRegisterModal] = useState(false);
-
+  const [categories, setCategories] = useState<{ HC_id: number, Name: string }[]>([]);
   const handleShow = () => setShowLoginRegisterModal(true);
   const handleClose = () => setShowLoginRegisterModal(false);
-  
+
   const router = useRouter();
   const goToSettings = () => {
     router.push("/settings");
   };
+
+  // Fetch help categories from the server
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/helper_categories");
+        if (!response.ok) throw new Error("Failed to fetch categories");
+        
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   return (
     <>
@@ -39,11 +55,21 @@ export const MainNavbar = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="/" className="link-text-white">Home</Nav.Link>
+              <Nav.Link href="/" className="link-text-white">
+                Home
+              </Nav.Link>
               <NavDropdown title="Find help" id="help-nav-dropdown" className="link-text-white">
-                <NavDropdown.Item href="/search?category=Financial">Financial</NavDropdown.Item>
-                <NavDropdown.Item href="/search?category=Psychological">Psychological</NavDropdown.Item>
-                <NavDropdown.Item href="/search?category=IT">IT</NavDropdown.Item>
+                {categories.length > 0 ? (
+                  categories.map((category) => (
+                    <NavDropdown.Item 
+                      key={category.HC_id} 
+                      href={`/search?helperCategoryId=${category.HC_id}`}>
+                      {category.Name}
+                    </NavDropdown.Item>
+                  ))
+                ) : (
+                  <NavDropdown.Item disabled>Loading...</NavDropdown.Item>
+                )}
               </NavDropdown>
             </Nav>
             {/* Conditional button based on login */}

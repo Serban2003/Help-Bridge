@@ -4,11 +4,11 @@ export class Review {
     constructor(R_id, H_id, title, description, U_id, rating, ts_created = null) {
         this.R_id = R_id;
         this.H_id = H_id;
-        this.title = title;
-        this.description = description;
+        this.Title = title;
+        this.Description = description;
         this.U_id = U_id;
-        this.rating = rating;
-        this.ts_created = ts_created;
+        this.Rating = rating;
+        this.Ts_created = ts_created;
     }
   }
   
