@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllUsers, createUser, getUserByEmail } from "../controllers/userController.js";
+import { getAllUsers, createUser, getUserByEmail, deleteUser } from "../controllers/userController.js";
   
 const router = Router();
 // If email is present in query, use email filter, else return all
@@ -13,5 +13,5 @@ if (req.query.email) {
 });
 
 router.post("/", createUser);
-
+router.delete("/", deleteUser);
 export default router;

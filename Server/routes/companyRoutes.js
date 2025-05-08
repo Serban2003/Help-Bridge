@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllCompanies, createCompany, getCompanyById } from "../controllers/companyController.js";
+import { getAllCompanies, createCompany, getCompanyById, deleteCompany } from "../controllers/companyController.js";
   
 const router = Router();
 // If is is present in query, use id filter, else return all
@@ -13,5 +13,5 @@ if (req.query.id) {
 });
 
 router.post("/", createCompany);
-
+router.delete('/',deleteCompany);
 export default router;

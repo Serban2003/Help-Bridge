@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import {getAllProfileImages, createProfileImage, getProfileImageById } from "../controllers/profileImageController.js";
+import {getAllProfileImages, createProfileImage, getProfileImageById, deleteProfileImage } from "../controllers/profileImageController.js";
   
 const router = Router();
 
@@ -21,5 +21,6 @@ else {
 
 // POST /api/images - Upload a new profile image
 router.post("/", upload.single("image"), createProfileImage);
+router.delete("/", deleteProfileImage);
 
 export default router;

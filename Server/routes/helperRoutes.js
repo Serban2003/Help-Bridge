@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {getAllHelpers, getHelperByEmail, getHelpersByHelperCategoryId, createHelper } from "../controllers/helperController.js";
+import {getAllHelpers, getHelperByEmail, getHelpersByHelperCategoryId, createHelper, deleteHelper } from "../controllers/helperController.js";
 
 const router = Router();
 // If is is present in query, use id filter, else return all
@@ -17,5 +17,5 @@ else {
 });
 
 router.post("/", createHelper);
-
+router.delete("/", deleteHelper);
 export default router;

@@ -71,3 +71,23 @@ export const getCompanyById = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const deleteCompany = async (req, res) => {
+  const id = req.query.id;
+
+  if (!id) {
+    return res.status(400).json({ message: "Company ID is required" });
+  }
+
+  try {
+    await sql.connect(dbConfig);
+    const result = await sql.query`DELETE FROM Companies WHERE C_id = ${id}`;
+    if (result.rowsAffected[0] === 0) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+    res.status(200).json({ message: "Company deleted successfully" });
+  } catch (err) {
+    console.error("DELETE /companies error:", err);
+    res.status(500).send("Failed to delete company");
+  }
+};
