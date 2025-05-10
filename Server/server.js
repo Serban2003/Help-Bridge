@@ -8,6 +8,7 @@ import helperRoutes from "./routes/helperRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 import profileImageRoutes from "./routes/profileImageRoutes.js";
 import loginRoutes from "./routes/loginRoutes.js";
+import availabilityRoutes from "./routes/availabilityRoutes.js"
 const app = express();
 app.use(cors());
 app.use(json());
@@ -20,6 +21,7 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/helpers", helperRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/images", profileImageRoutes);
+app.use("/api/availability", availabilityRoutes);
 
 app.listen(5000, () =>
   console.log("API server running on http://localhost:5000")

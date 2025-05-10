@@ -1,9 +1,12 @@
-import React, { JSX, useState } from "react";
+import React, { useState, JSX } from "react";
 import { Modal, Button } from "react-bootstrap";
 import "./Calendar.css";
-import "./../globals.css"; // Import your global CSS file
+import "./../globals.css";
+import { Availability } from "../models/Availability";
+import { getFormattedDate } from "../utils";
+
 interface CalendarProps {
-  availableSlots: Record<string, string[]>; // { '2025-05-07': ['10:00', '11:00'] }
+  availableSlots: Availability[] | null;
   onBook: (date: string, time: string, title: string, message: string) => void;
 }
 
@@ -16,30 +19,46 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const year = today.getFullYear();
-  const month = today.getMonth(); // 0 = Jan
+  const month = today.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
+  // Book the selected slot
   const handleBook = () => {
     if (selectedDate && selectedTime && title.trim() && message.trim()) {
-      setShowSuccessModal(true); // show confirmation modal
+      onBook(selectedDate, selectedTime, title, message);
+      setShowSuccessModal(true);
     } else {
       alert("Please fill in all fields before booking.");
     }
   };
 
+  // Render the calendar days
   const renderCalendarDays = () => {
-    const firstDayOfWeek = new Date(year, month, 1).getDay(); // Sunday = 0
+    const firstDayOfWeek = new Date(year, month, 1).getDay();
     const calendar: JSX.Element[] = [];
 
-    // empty cells before 1st
+    // Empty cells before the first day of the month
     for (let i = 0; i < firstDayOfWeek; i++) {
       calendar.push(<div key={`empty-${i}`} className="calendar-day empty" />);
     }
 
+    // Render the actual days
     for (let day = 1; day <= daysInMonth; day++) {
       const currentDate = new Date(year, month, day);
-      const dateStr = getFormatedDate(currentDate, "yyyy-mm-dd");
-      const isAvailable = availableSlots[dateStr] !== undefined;
+      const dateStr = getFormattedDate(currentDate, "yyyy-mm-dd");
+
+      // Safely check available slots
+      const availableSlot = availableSlots?.find((slot) => {
+        if (slot.Date instanceof Date) {
+          return slot.Date.toISOString().split("T")[0] === dateStr;
+        }
+        if (typeof slot.Date === "string") {
+          return new Date(slot.Date).toISOString().split("T")[0] === dateStr;
+        }
+        return false;
+      });
+
+      const isAvailable = !!availableSlot && availableSlot?.IsBooked == 0;
       const isPast = currentDate < new Date(new Date().setHours(0, 0, 0, 0));
 
       calendar.push(
@@ -51,6 +70,7 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
           onClick={() => {
             if (isAvailable && !isPast) {
               setSelectedDate(dateStr);
+              setSelectedTime(null);
             }
           }}
         >
@@ -62,14 +82,6 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
     return calendar;
   };
 
-  const getFormatedDate = (date: Date, type: string) => {
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const dd = String(date.getDate()).padStart(2, "0");
-    if (type === "yyyy-mm-dd") return `${yyyy}-${mm}-${dd}`;
-    else return `${dd}-${mm}-${yyyy}`;
-  }
-
   return (
     <>
       <div className="calendar-booking p-4 border rounded bg-white shadow-sm">
@@ -80,20 +92,23 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
         {selectedDate && (
           <>
             <h6 className="fw-semibold mb-2">
-              Available times on {getFormatedDate(new Date(selectedDate), "dd-mm-yyyy")}
+              Available times on {getFormattedDate(new Date(selectedDate), "dd-mm-yyyy")}
             </h6>
             <div className="d-flex flex-wrap gap-2 mb-3">
-              {availableSlots[selectedDate]?.map((time) => (
+              {(availableSlots?.filter((slot) => {
+                const slotDate = slot.Date instanceof Date ? slot.Date : new Date(slot.Date);
+                return slotDate.toISOString().split("T")[0] === selectedDate;
+              }) || []).map((slot) => (
                 <Button
-                  key={time}
+                  key={slot.AV_id}
                   className={
-                    selectedTime === time
+                    selectedTime === slot.getFormattedTime()
                       ? "toggle-button-custom-active"
                       : "toggle-button-custom"
                   }
-                  onClick={() => setSelectedTime(time)}
+                  onClick={() => setSelectedTime(slot.getFormattedTime())}
                 >
-                  {time}
+                  {slot.getFormattedTime()}
                 </Button>
               ))}
             </div>
@@ -130,6 +145,7 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
           </>
         )}
       </div>
+
       <Modal
         show={showSuccessModal}
         onHide={() => setShowSuccessModal(false)}

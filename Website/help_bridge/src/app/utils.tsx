@@ -3,6 +3,7 @@ import { Helper, transformToHelper } from "./models/Helper";
 import { HelperCategory, transformToCategory } from "./models/HelperCategory";
 import { Review, transformToReview } from "./models/Review";
 import { ProfileImage, transformToProfileImage } from "./models/ProfileImage";
+import { Availability, transformToAvailability } from "./models/Availability";
 
 // USERS
 export const fetchUserById = async (
@@ -120,6 +121,26 @@ export const fetchProfileImageById = async (
   }
 };
 
+// AVAILABILITY
+export const fetchAvailabilityByHelperId = async (
+    helperId: number | string
+  ): Promise<Availability[] | null> => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/availability?helperId=${helperId}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch availability");
+  
+      const data = await response.json();
+      if(data.message == "Availability not found") return null;
+  
+      return data.map((availability: any) => transformToAvailability(availability));
+    } catch (error) {
+      console.error("Error fetching availability:", error);
+      return null;
+    }
+  };
+
 // MISC
 export function bufferToDate(buffer: any): Date {
   // Extract the integer from the buffer
@@ -133,3 +154,11 @@ export function bufferToDate(buffer: any): Date {
   // Convert UNIX timestamp to milliseconds and return Date object
   return new Date(timestamp * 1000);
 }
+
+export function getFormattedDate(date: Date, type: string) {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    if (type === "yyyy-mm-dd") return `${yyyy}-${mm}-${dd}`;
+    else return `${dd}-${mm}-${yyyy}`;
+  }

@@ -20,7 +20,9 @@ import {
   fetchReviewsByHelperId,
   getAverageRating,
   fetchProfileImageById,
+  fetchAvailabilityByHelperId
 } from "../utils";
+import { Availability } from "../models/Availability";
 
 export default function HelperPage() {
   const searchParams = useSearchParams();
@@ -29,18 +31,13 @@ export default function HelperPage() {
   const [helper, setHelper] = useState<HelperModel | null>(null);
   const [category, setCategory] = useState<HelperCategory | null>(null);
   const [reviews, setReviews] = useState<Review[] | null>(null);
+  const [availability, setAvailability] = useState<Availability[] | null>(null);
   const [imageUrl, setImageUrl] = useState<string>(
     "/images/default-avatar.jpg"
   );
   const [showCalendar, setShowCalendar] = useState(false);
   const [error, setError] = useState<string>("");
   const [averageRating, setAverageRating] = useState<number>(0);
-
-  const availableSlots = {
-    "2025-05-06": ["09:00", "10:00", "14:00"],
-    "2025-05-07": ["11:00", "13:00"],
-    "2025-05-10": ["10:30", "12:00"],
-  };
 
   useEffect(() => {
     if (!helperID) return;
@@ -57,6 +54,11 @@ export default function HelperPage() {
 
           const reviewsData = await fetchReviewsByHelperId(helperData.H_id);
           setReviews(reviewsData);
+
+          const availabilityData = await fetchAvailabilityByHelperId(helperData.H_id);
+          setAvailability(availabilityData);
+          
+          
 
           // Calculate average rating after setting reviews
           if (reviewsData != null && reviewsData.length > 0) {
@@ -171,7 +173,7 @@ export default function HelperPage() {
           {/* Calendar (always rendered for smooth layout) */}
           <div className={`calendar-block ${showCalendar ? "show" : ""}`}>
             <Calendar
-              availableSlots={availableSlots}
+              availableSlots={availability}
               onBook={(date, time, title, message) =>
                 alert(
                   `📅 Booked on ${date} at ${time}\n📝 Title: ${title}\n💬 Message: ${message}`
