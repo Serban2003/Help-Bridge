@@ -13,13 +13,13 @@ export class User {
     ts_created = null
   ) {
     this.U_id = U_id;
-    this.firstname = firstname;
-    this.lastname = lastname;
-    this.email = email;
-    this.password = password;
-    this.phone = phone;
+    this.Firstname = firstname;
+    this.Lastname = lastname;
+    this.Email = email;
+    this.Password = password;
+    this.Phone = phone;
     this.I_id = I_id;
-    this.ts_created = ts_created;
+    this.Ts_created = ts_created;
   }
 }
 
@@ -96,6 +96,40 @@ export const getUserByEmail = async (req, res) => {
     res.status(200).json(user);
   } catch (err) {
     console.error("Error fetching user by email:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getUserById = async (req, res) => {
+  const id = req.query.id;
+
+  if (!id) {
+    return res.status(400).json({ message: "ID query parameter is required" });
+  }
+
+  try {
+    await sql.connect(dbConfig);
+    const result = await sql.query`SELECT * FROM Users WHERE U_id = ${id}`;
+
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const row = result.recordset[0];
+    const user = new User(
+      row.U_id,
+      row.Firstname,
+      row.Lastname,
+      row.Email,
+      row.Password,
+      row.Phone,
+      row.I_id,
+      row.Ts_created
+    );
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error fetching user by id:", err);
     res.status(500).json({ message: "Server error" });
   }
 };

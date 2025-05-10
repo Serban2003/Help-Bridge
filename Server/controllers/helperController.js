@@ -100,6 +100,40 @@ export const getHelperByEmail = async (req, res) => {
     }
   };
 
+
+  export const getHelperById = async (req, res) => {
+    const id = req.query.id;
+  
+    if (!id) {
+      return res.status(400).json({ message: "Helper id query parameter is required" });
+    }
+    
+    try {
+      await sql.connect(dbConfig);
+      const result = await sql.query(`SELECT * FROM Helpers WHERE H_id = ${id}`);
+      const helpers = result.recordset.map(row =>
+        new Helper(
+            row.H_id,
+            row.HC_id,
+            row.C_id,
+            row.Firstname,
+            row.Lastname,
+            row.Description,
+            row.Experience,
+            row.Email,
+            row.Password,
+            row.Phone,
+            row.I_id,
+            row.Ts_created
+        )
+      );
+      res.json(helpers);
+    } catch (err) {
+      console.error("GET /helpers error:", err);
+      res.status(500).send("Failed to fetch helpers");
+    }
+  };
+
   export const getHelpersByHelperCategoryId = async (req, res) => {
     const id = req.query.helperCategoryId;
   

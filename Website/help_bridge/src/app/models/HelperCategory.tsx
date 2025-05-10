@@ -37,3 +37,11 @@ export class HelperCategory{
         return `HelperCategory ID: ${this._HC_id}, Name: ${this._name}, Description: ${this._description}`;
     }
 }
+
+export function transformToCategory(data: any): HelperCategory {
+    return new HelperCategory(
+      data.HC_id,
+      data.Name,
+      data.Description
+    );
+  }

@@ -4,6 +4,14 @@ import Spinner from "react-bootstrap/Spinner";
 import { Review } from "@/app/models/Review";
 import StarRating from "./StarRating";
 import "./HelperCard.css";
+import { useRouter } from "next/navigation";
+import { ProfileImage } from "@/app/models/ProfileImage";
+
+import {
+  fetchProfileImageById,
+  fetchReviewsByHelperId,
+  getAverageRating,
+} from "../utils";
 
 interface HelperCardProps {
   H_id: number;
@@ -20,10 +28,17 @@ const HelperCard = ({
   experience,
   imageId,
 }: HelperCardProps) => {
-  const [imageUrl, setImageUrl] = useState<string>("/images/default-avatar.jpg");
+  const [imageUrl, setImageUrl] = useState<string>(
+    "/images/default-avatar.jpg"
+  );
   const [reviews, setReviews] = useState<Review[]>([]);
   const [averageRating, setAverageRating] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/helper?helperId=${H_id}`); // Navigate to the helper details page
+  };
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -33,15 +48,14 @@ const HelperCard = ({
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/api/images?id=${imageId}`);
-        if (!response.ok) throw new Error("Failed to fetch profile image");
+        const imageData = await fetchProfileImageById(imageId);
 
-        const data = await response.json();
-        if (data && data.url) {
-          setImageUrl(data.url);
+        if (imageData) {
+          setImageUrl(
+            ProfileImage.fromByteArrayToImageUrl(imageData.Data.data)
+          );
         }
-      } catch (error) {
-        console.error("Error fetching image:", error);
+      } catch {
       } finally {
         setLoading(false);
       }
@@ -50,34 +64,30 @@ const HelperCard = ({
     fetchImage();
   }, [imageId]);
 
-    // Fetch reviews
-    useEffect(() => {
-      const fetchReviews = async () => {
-        try {
-          const response = await fetch(`http://localhost:5000/api/reviews?helperId=${H_id}`);
-          if (!response.ok) throw new Error("Failed to fetch reviews");
-  
-          const data = await response.json();
-          setReviews(data);
-  
-          // Calculate average rating
-          if (data.length > 0) {
-            const avg = data.reduce((sum: number, review: Review) => sum + review.Rating, 0) / data.length;
-            setAverageRating(Math.round(avg * 10) / 10); // Round to 1 decimal
-          } else {
-            setAverageRating(0);
-          }
-        } catch (error) {
-          console.error("Error fetching reviews:", error);
+  // Fetch reviews
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!H_id) {
+        setLoading(false);
+        return;
+      }
+      const reviewsData = await fetchReviewsByHelperId(H_id);
+      if (reviewsData) {
+        setReviews(reviewsData);
+        // Calculate average rating
+        if (reviewsData.length > 0) {
+          setAverageRating(getAverageRating(reviewsData));
+        } else {
+          setAverageRating(0);
         }
-      };
-  
-      fetchReviews();
-    }, [H_id]);
+      }
+    };
 
+    fetchReviews();
+  }, [H_id]);
 
   return (
-    <div className="helper-card rounded shadow flex-fill">
+    <div className="helper-card rounded shadow flex-fill" onClick={handleClick}>
       <div className="helper-avatar">
         {loading ? (
           <div className="spinner-container">

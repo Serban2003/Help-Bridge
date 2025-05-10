@@ -7,7 +7,7 @@ import { Helper as HelperModel } from "@/app/models/Helper";
 import { HelperCategory } from "@/app/models/HelperCategory";
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
-import { transformToHelper } from "@/app/models/Helper";
+import { fetchHelperByCategoryId, fetchHelperCategoryById } from "../utils";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
@@ -18,19 +18,25 @@ export default function SearchPage() {
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
+    if (!categoryId){
+      setLoading(false);
+      return;
+    }
     const fetchHelpers = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/helpers?helperCategoryId=${categoryId}`
-        );
-        if (!response.ok) throw new Error("Failed to fetch helpers");
+        const helpersData = await fetchHelperByCategoryId(categoryId);
+        if (helpersData) setHelpers(helpersData);
+      } catch {
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        const data = await response.json();
-        const helpers = data.map((item: any) => transformToHelper(item));
-        setHelpers(helpers);
-      } catch (err) {
-        setError("Unable to load helpers. Please try again later.");
-        console.error("Error fetching helpers:", err);
+    const fetchCategory = async () => {
+      try {
+        const categoryData = await fetchHelperCategoryById(categoryId);
+        if (categoryData) setCategory(categoryData);
+      } catch {
       } finally {
         setLoading(false);
       }
@@ -38,26 +44,6 @@ export default function SearchPage() {
 
     if (categoryId) {
       fetchHelpers();
-    }
-  }, [categoryId]);
-
-  useEffect(() => {
-    const fetchCategory = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:5000/api/helper_categories?id=${categoryId}`
-        );
-        if (!response.ok) throw new Error("Failed to fetch category");
-
-        const data = await response.json();
-        setCategory(data);
-      } catch (err) {
-        setError("Unable to load category. Please try again later.");
-        console.error("Error fetching category:", err);
-      }
-    };
-
-    if (categoryId) {
       fetchCategory();
     }
   }, [categoryId]);
@@ -66,16 +52,15 @@ export default function SearchPage() {
     <div className="bg-secondary vh-100">
       <div className="container  pt-5">
         <div className="d-flex flex-column align-items-center justify-content-center">
-        <img
-          src="/images/helpers_page.svg"
-          alt="Illustration"
-          className="illustration"
-        />
+          <img
+            src="/images/helpers_page.svg"
+            alt="Illustration"
+            className="illustration"
+          />
 
-        <h1 className="fs-1 fw-bold">Find the Right Expert for You</h1>
-        <h2 className="fs-2">Choose Your Helper</h2>
-</div>
-        
+          <h1 className="fs-1 fw-bold">Find the Right Expert for You</h1>
+          <h2 className="fs-2">Choose Your Helper</h2>
+        </div>
 
         {loading && (
           <div className="d-flex justify-content-center my-4">

@@ -1,3 +1,5 @@
+import {bufferToDate} from "../utils"
+
 export class Helper {
     private _H_id: number;
     private _HC_id: number;
@@ -153,7 +155,7 @@ export const transformToHelper = (data: any): Helper => {
       data.Password,
       data.Phone,
       data.I_id,
-      new Date(data.Ts_created)
+      bufferToDate(data.Ts_created)
     );
   };
   

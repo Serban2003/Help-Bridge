@@ -1,3 +1,5 @@
+import {bufferToDate} from "../utils"
+
 export class User {
     private _U_id: number;
     private _firstname: string;
@@ -90,3 +92,17 @@ export class User {
         return `User ID: ${this._U_id}, Name: ${this.getFullName()}, Email: ${this._email}, Phone: ${this._phone}, Image ID: ${this._I_id}, Created At: ${this._ts_created}`;
     }
 }
+
+export const transformToUser = (data: any): User => {
+    return new User(
+      data.U_id,
+      data.Firstname,
+      data.Lastname,
+      data.Email,
+      data.Password,
+      data.Phone,
+      data.I_id,
+      bufferToDate(data.Ts_created)
+    );
+  };
+  

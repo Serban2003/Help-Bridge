@@ -61,7 +61,7 @@ export const getReviewById = async (req, res) => {
       const result = await sql.query`SELECT * FROM Reviews WHERE R_id = ${id}`;
   
       if (result.recordset.length === 0) {
-        return res.status(404).json({ message: "Review not found" });
+        return res.status(200).json({ message: "Review not found" });
       }
   
       const row = result.recordset[0];
@@ -94,7 +94,7 @@ export const getReviewById = async (req, res) => {
       const result = await sql.query`SELECT * FROM Reviews WHERE H_id = ${id}`;
   
       if (result.recordset.length === 0) {
-        return res.status(404).json({ message: "Reviews not found" });
+        return res.status(200).json({ message: "Reviews not found" });
       }
   
       const reviews = result.recordset.map(row =>
