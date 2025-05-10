@@ -45,3 +45,11 @@ INSERT INTO Appointments (H_id, Title, Message, Date, U_id, R_id) VALUES
 (3, 'Weekly Cleaning', 'Please clean all rooms.', '2025-05-03 09:00:00', 3, 3),
 (4, 'Garden Refresh', 'Backyard plants need care.', '2025-05-04 11:00:00', 4, 4),
 (5, 'Paint Living Room', 'We want to repaint the walls.', '2025-05-05 13:00:00', 5, 5);
+
+-- 8. Insert into Availability
+INSERT INTO Availability (H_id, Date, IsBooked, A_id) VALUES
+(1019, '2025-05-11 09:00:00', 0, NULL),
+(1019, '2025-05-11 10:00:00', 0, NULL),
+(1019, '2025-05-12 11:00:00', 0, NULL),
+(1019, '2025-05-12 12:00:00', 0, NULL),
+(1019, '2025-05-13 13:00:00', 0, NULL);

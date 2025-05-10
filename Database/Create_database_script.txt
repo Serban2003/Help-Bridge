@@ -138,3 +138,19 @@ create table dbo.Appointments
 )
 go
 
+create table Availability
+(
+    AV_id    int identity
+        constraint Availability_pk
+            primary key,
+    H_id     int      not null
+        constraint Availability_Helpers_H_id_fk
+            references Helpers,
+    Date     datetime not null,
+    IsBooked bit      not null,
+    A_id     int
+        constraint Availability_Appointments_A_id_fk
+            references Appointments
+)
+go
+
