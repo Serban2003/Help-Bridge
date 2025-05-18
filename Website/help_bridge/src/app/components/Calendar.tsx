@@ -4,6 +4,7 @@ import "./Calendar.css";
 import "./../globals.css";
 import { Availability } from "../models/Availability";
 import { getFormattedDate } from "../utils";
+import { useAuth } from "../models/AuthContext";
 
 interface CalendarProps {
   availableSlots: Availability[] | null;
@@ -17,16 +18,22 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
   const [title, setTitle] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+  const { auth } = useAuth();
+  const [bookingError, setBookingError] = useState<string>("");
   const year = today.getFullYear();
   const month = today.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   // Book the selected slot
   const handleBook = () => {
+    if (!auth) {
+      setBookingError("You must be logged in to book a consultation.");
+      return;
+    }
     if (selectedDate && selectedTime && title.trim() && message.trim()) {
       onBook(selectedDate, selectedTime, title, message);
       setShowSuccessModal(true);
+      setBookingError("");
     } else {
       alert("Please fill in all fields before booking.");
     }
@@ -92,13 +99,17 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
         {selectedDate && (
           <>
             <h6 className="fw-semibold mb-2">
-              Available times on {getFormattedDate(new Date(selectedDate), "dd-mm-yyyy")}
+              Available times on{" "}
+              {getFormattedDate(new Date(selectedDate), "dd-mm-yyyy")}
             </h6>
             <div className="d-flex flex-wrap gap-2 mb-3">
-              {(availableSlots?.filter((slot) => {
-                const slotDate = slot.Date instanceof Date ? slot.Date : new Date(slot.Date);
-                return slotDate.toISOString().split("T")[0] === selectedDate;
-              }) || []).map((slot) => (
+              {(
+                availableSlots?.filter((slot) => {
+                  const slotDate =
+                    slot.Date instanceof Date ? slot.Date : new Date(slot.Date);
+                  return slotDate.toISOString().split("T")[0] === selectedDate;
+                }) || []
+              ).map((slot) => (
                 <Button
                   key={slot.AV_id}
                   className={
@@ -135,13 +146,18 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
               />
             </div>
 
-            <Button
-              onClick={handleBook}
-              className="custom-button"
-              disabled={!selectedTime || !title || !message}
-            >
-              Confirm Booking
-            </Button>
+            <div className="d-flex flex-column">
+              <Button
+                onClick={handleBook}
+                className="custom-button mb-2"
+                disabled={!selectedTime || !title || !message}
+              >
+                Confirm Booking
+              </Button>
+              {bookingError && (
+                <div className="text-danger small mt-1">{bookingError}</div>
+              )}
+            </div>
           </>
         )}
       </div>

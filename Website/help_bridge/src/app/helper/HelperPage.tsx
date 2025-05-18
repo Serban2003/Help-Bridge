@@ -175,9 +175,7 @@ export default function HelperPage() {
             <Calendar
               availableSlots={availability}
               onBook={(date, time, title, message) =>
-                alert(
-                  `📅 Booked on ${date} at ${time}\n📝 Title: ${title}\n💬 Message: ${message}`
-                )
+              {}
               }
             />
           </div>

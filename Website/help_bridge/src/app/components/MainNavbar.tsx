@@ -14,14 +14,13 @@ import "./MainNavbar.css";
 export const MainNavbar = () => {
   const { auth, logout } = useAuth();
   const [showLoginRegisterModal, setShowLoginRegisterModal] = useState(false);
-  const [categories, setCategories] = useState<{ HC_id: number, Name: string }[]>([]);
+  const [categories, setCategories] = useState<{ HC_id: number; Name: string }[]>([]);
+  const router = useRouter();
+
   const handleShow = () => setShowLoginRegisterModal(true);
   const handleClose = () => setShowLoginRegisterModal(false);
-
-  const router = useRouter();
-  const goToSettings = () => {
-    router.push("/settings");
-  };
+  const goToSettings = () => router.push("/settings");
+  const goToAppointments = () => router.push("/appointments");
 
   // Fetch help categories from the server
   useEffect(() => {
@@ -29,7 +28,6 @@ export const MainNavbar = () => {
       try {
         const response = await fetch("http://localhost:5000/api/helper_categories");
         if (!response.ok) throw new Error("Failed to fetch categories");
-        
         const data = await response.json();
         setCategories(data);
       } catch (error) {
@@ -43,9 +41,9 @@ export const MainNavbar = () => {
     <>
       <Navbar expand="lg" className="main-navbar sticky-top">
         <Container>
-          <Navbar.Brand href="#home">
+          <Navbar.Brand href="/">
             <img
-              alt=""
+              alt="HelpBridge logo"
               src="/images/HelpBridge_logo.png"
               width="50"
               height="50"
@@ -58,12 +56,14 @@ export const MainNavbar = () => {
               <Nav.Link href="/" className="link-text-white">
                 Home
               </Nav.Link>
+
               <NavDropdown title="Find help" id="help-nav-dropdown" className="link-text-white">
                 {categories.length > 0 ? (
                   categories.map((category) => (
-                    <NavDropdown.Item 
-                      key={category.HC_id} 
-                      href={`/search?helperCategoryId=${category.HC_id}`}>
+                    <NavDropdown.Item
+                      key={category.HC_id}
+                      href={`/search?helperCategoryId=${category.HC_id}`}
+                    >
                       {category.Name}
                     </NavDropdown.Item>
                   ))
@@ -71,15 +71,31 @@ export const MainNavbar = () => {
                   <NavDropdown.Item disabled>Loading...</NavDropdown.Item>
                 )}
               </NavDropdown>
+
+              {/* Buton Settings */}
+              {auth && (
+                <Nav.Link onClick={goToSettings} className="link-text-white">
+                  Settings
+                </Nav.Link>
+              )}
+
+              {/* Buton Appointments */}
+              {auth && (
+                <Nav.Link onClick={goToAppointments} className="link-text-white">
+                  Appointments
+                </Nav.Link>
+              )}
             </Nav>
+
             {/* Conditional button based on login */}
             {auth ? (
               <>
-                <span className="text-white me-3">
-                  Welcome, {auth.data.Firstname}!
-                </span>
+                <span className="text-white me-3">Welcome, {auth.data.Firstname}!</span>
                 <Button variant="light me-3" onClick={goToSettings}>
                   Settings
+                </Button>
+                <Button variant="light me-3" onClick={goToAppointments}>
+                  Appointments
                 </Button>
                 <Button variant="outline-light" onClick={logout}>
                   Logout
@@ -95,10 +111,7 @@ export const MainNavbar = () => {
       </Navbar>
 
       {/* Modal for Login/Register */}
-      <LoginRegisterModal
-        show={showLoginRegisterModal}
-        handleClose={handleClose}
-      />
+      <LoginRegisterModal show={showLoginRegisterModal} handleClose={handleClose} />
     </>
   );
 };
