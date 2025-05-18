@@ -175,7 +175,6 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
     }
 
     handleClose();
-    resetForm();
     setShowAccountSetupModal(true);
   };
 
@@ -293,12 +292,12 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
                 </Button>
 
                 {loginErrorMessage && (
-                  <div className="text-danger text-center mt-2">
+                  <div className="text-danger text-center mt-2 mb-0 pb-0">
                     {loginErrorMessage}
                   </div>
                 )}
                 {loginSuccessMessage && (
-                  <div className="text-success text-center mt-2">
+                  <div className="text-success text-center mt-2 mb-0 pd-0">
                     {loginSuccessMessage}
                   </div>
                 )}
@@ -451,7 +450,7 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
                 </Button>
 
                 {registerEmailError && (
-  <p className="text-danger text-center mt-2 pb-0">
+  <p className="text-danger text-center mt-2 mb-0 pb-0">
     {registerEmailError}
   </p>
 )}

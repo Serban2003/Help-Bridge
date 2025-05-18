@@ -84,7 +84,6 @@ const AccountSetupModal = ({
       setValidated(true);
       return;
     }
-
     // Phone format validation
     if (!phoneRegex.test(phone)) {
       setPhoneError("Invalid phone number format.");
@@ -112,7 +111,6 @@ const AccountSetupModal = ({
         if (!imageResponse.ok) throw new Error("Image upload failed.");
         const imageData = await imageResponse.json();
         profileImageId = imageData.I_id;
-        console.log("Image ID:", profileImageId);
       }
 
       if (registerRole === "user") {
@@ -162,7 +160,6 @@ const AccountSetupModal = ({
             if (!imageResponse.ok) throw new Error("Image upload failed.");
             const imageData = await imageResponse.json();
             companyLogoId = imageData.I_id;
-            console.log("Image ID:", companyLogoId);
           }
 
           const companyResponse = await fetch(
@@ -222,6 +219,7 @@ const AccountSetupModal = ({
 
       // Only attempt login if registration succeeded
       if (registerSuccess) {
+        console.log(registerEmail + " " + registerPassword);
         const loginRes = await fetch("http://localhost:5000/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
