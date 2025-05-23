@@ -49,7 +49,7 @@ export default function SearchPage() {
   }, [categoryId]);
 
   return (
-    <div className="bg-secondary vh-100">
+    <div className="bg-secondary">
       <div className="container  pt-5">
         <div className="d-flex flex-column align-items-center justify-content-center">
           <img
@@ -72,7 +72,7 @@ export default function SearchPage() {
 
         {error && <Alert variant="danger">{error}</Alert>}
 
-        <div className="container mt-4">
+        <div className="container mt-4 pb-4">
           <div className="row">
             {helpers.length > 0
               ? helpers.map((h) => (
