@@ -23,6 +23,71 @@ export const fetchUserById = async (
   }
 };
 
+export const updateUserById = async (
+  userId: string | number,
+  updatedUserData: Partial<User>
+): Promise<User | null> => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/users?id=${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedUserData),
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to update user");
+
+    const data = await response.json();
+    console.log(data);
+    return transformToUser(data[0]);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return null;
+  }
+};
+
+export const deleteUser = async (userId: string | number): Promise<boolean> => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/users?id=${userId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to delete user");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return false;
+  }
+};
+
+
+export const changeUserPassword = async (U_id: number | string, current: string, newPass: string) => {
+  const res = await fetch(`http://localhost:5000/api/users/change-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ U_id, currentPassword: current, newPassword: newPass }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Password change failed");
+  }
+
+  return await res.json();
+};
+
+
 // HELPERS
 export const fetchHelperById = async (
   helperId: number | string
@@ -58,6 +123,73 @@ export const fetchHelperByCategoryId = async (
   }
 };
 
+export const deleteHelper = async (helperId: string | number): Promise<boolean> => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/helpers?id=${helperId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to delete helper");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting helper:", error);
+    return false;
+  }
+};
+
+export const updateHelperById = async (
+  helperId: string | number,
+  updateHelperData: Partial<Helper>
+): Promise<Helper | null> => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/helpers?id=${helperId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateHelperData),
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to update helper");
+
+    const data = await response.json();
+    return transformToHelper(data);
+  } catch (error) {
+    console.error("Error updating helper:", error);
+    return null;
+  }
+};
+
+export const changeHelperPassword = async (
+  H_id: number | string,
+  current: string,
+  newPass: string
+) => {
+  const res = await fetch("http://localhost:5000/api/helpers/change-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ H_id, currentPassword: current, newPassword: newPass }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Password change failed");
+  }
+
+  return await res.json();
+};
+
+
 // HELP CATEGORIES
 export const fetchHelperCategoryById = async (
   categoryId: number | string
@@ -87,7 +219,7 @@ export const fetchReviewsByHelperId = async (
     if (!response.ok) throw new Error("Failed to fetch reviews");
 
     const data = await response.json();
-    if(data.message == "Reviews not found") return null;
+    if (data.message == "Reviews not found") return null;
 
     return data.map((review: any) => transformToReview(review));
   } catch (error) {
@@ -104,6 +236,22 @@ export const getAverageRating = (reviews: Review[]): number => {
 };
 
 // PROFILE IMAGES
+export const createProfileImage = async (
+  profileImage: File
+): Promise<number> => {
+  const imageFormData = new FormData();
+  imageFormData.append("image", profileImage);
+
+  const imageResponse = await fetch("http://localhost:5000/api/images", {
+    method: "POST",
+    body: imageFormData,
+  });
+
+  if (!imageResponse.ok) throw new Error("Image upload failed.");
+  const imageData = await imageResponse.json();
+  return imageData.I_id;
+};
+
 export const fetchProfileImageById = async (
   imageId: number | string
 ): Promise<ProfileImage | null> => {
@@ -123,23 +271,25 @@ export const fetchProfileImageById = async (
 
 // AVAILABILITY
 export const fetchAvailabilityByHelperId = async (
-    helperId: number | string
-  ): Promise<Availability[] | null> => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/availability?helperId=${helperId}`
-      );
-      if (!response.ok) throw new Error("Failed to fetch availability");
-  
-      const data = await response.json();
-      if(data.message == "Availability not found") return null;
-  
-      return data.map((availability: any) => transformToAvailability(availability));
-    } catch (error) {
-      console.error("Error fetching availability:", error);
-      return null;
-    }
-  };
+  helperId: number | string
+): Promise<Availability[] | null> => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/availability?helperId=${helperId}`
+    );
+    if (!response.ok) throw new Error("Failed to fetch availability");
+
+    const data = await response.json();
+    if (data.message == "Availability not found") return null;
+
+    return data.map((availability: any) =>
+      transformToAvailability(availability)
+    );
+  } catch (error) {
+    console.error("Error fetching availability:", error);
+    return null;
+  }
+};
 
 // MISC
 export function bufferToDate(buffer: any): Date {
@@ -156,9 +306,9 @@ export function bufferToDate(buffer: any): Date {
 }
 
 export function getFormattedDate(date: Date, type: string) {
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const dd = String(date.getDate()).padStart(2, "0");
-    if (type === "yyyy-mm-dd") return `${yyyy}-${mm}-${dd}`;
-    else return `${dd}-${mm}-${yyyy}`;
-  }
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  if (type === "yyyy-mm-dd") return `${yyyy}-${mm}-${dd}`;
+  else return `${dd}-${mm}-${yyyy}`;
+}

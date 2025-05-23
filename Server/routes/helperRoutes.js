@@ -6,6 +6,8 @@ import {
   getHelperById,
   createHelper,
   deleteHelper,
+  updateHelperById,
+  changeHelperPassword
 } from "../controllers/helperController.js";
 
 const router = Router();
@@ -26,5 +28,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", createHelper);
+router.post("/change-password", changeHelperPassword);
+router.put("/", updateHelperById);
 router.delete("/", deleteHelper);
 export default router;

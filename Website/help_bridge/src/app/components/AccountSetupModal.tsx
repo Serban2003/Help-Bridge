@@ -18,6 +18,7 @@ import {
 import { useAuth } from "@/app/models/AuthContext";
 import "./LoginRegisterModal.css";
 import "./../globals.css";
+import { createProfileImage } from "../utils";
 
 interface AccountSetupModalProps {
   show: boolean;
@@ -100,17 +101,7 @@ const AccountSetupModal = ({
 
     try {
       if (profileImage) {
-        const imageFormData = new FormData();
-        imageFormData.append("image", profileImage);
-
-        const imageResponse = await fetch("http://localhost:5000/api/images", {
-          method: "POST",
-          body: imageFormData,
-        });
-
-        if (!imageResponse.ok) throw new Error("Image upload failed.");
-        const imageData = await imageResponse.json();
-        profileImageId = imageData.I_id;
+        profileImageId = await createProfileImage(profileImage);
       }
 
       if (registerRole === "user") {
@@ -130,7 +121,7 @@ const AccountSetupModal = ({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             firstname: user.Firstname,
-            lastname: user.Fastname,
+            lastname: user.Lastname,
             email: user.Email,
             password: user.Password,
             phone: user.Phone,
@@ -233,8 +224,8 @@ const AccountSetupModal = ({
           throw new Error("Auto-login failed after registration.");
         }
 
-        const { role, data } = await loginRes.json();
-        login({ role, data });
+        const { role, id } = await loginRes.json();
+        login({ role, id });
 
         onSetupComplete();
         resetForm();
@@ -314,7 +305,7 @@ const AccountSetupModal = ({
     setErrorMessage(null); // Clear error message
     setValidated(false);
   };
-  
+
   return (
     <Modal show={show} onHide={handleClose} backdrop="static" centered>
       <Modal.Header>
@@ -519,9 +510,7 @@ const AccountSetupModal = ({
             </Button>
           </div>
           {errorMessage && (
-             <p className="text-danger text-center mt-2 pb-0">
-             {errorMessage}
-           </p>
+            <p className="text-danger text-center mt-2 pb-0">{errorMessage}</p>
           )}
         </Form>
       </Modal.Body>

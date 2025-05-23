@@ -5,6 +5,8 @@ import {
   getUserByEmail,
   getUserById,
   deleteUser,
+  updateUserById,
+  changeUserPassword
 } from "../controllers/userController.js";
 
 const router = Router();
@@ -22,5 +24,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", createUser);
+router.post("/change-password", changeUserPassword);
+router.put("/", updateUserById);
 router.delete("/", deleteUser);
 export default router;

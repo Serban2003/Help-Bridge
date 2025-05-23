@@ -1,8 +1,5 @@
 "use client";
 
-import { User } from "@/app/models/User";
-import { Helper } from "@/app/models/Helper";
-
 import {
   createContext,
   useContext,
@@ -16,25 +13,52 @@ type Role = "user" | "helper";
 
 type AuthData = {
   role: Role;
-  data: User | Helper;
+  id: string | number;
 };
 
 interface AuthContextType {
   auth: AuthData | null;
   login: (data: AuthData) => void;
   logout: () => void;
+  update: (data: AuthData) => void;
+  loading: boolean;
+  profileImageUrl: string;
+  setProfileImageUrl: (url: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [auth, setAuth] = useState<AuthData | null>(null);
-
+  const [loading, setLoading] = useState(true);
+  const [profileImageUrl, setProfileImageUrl] = useState(
+    "/images/default-avatar.jpg"
+  );
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) {
-      setAuth(JSON.parse(stored));
-    }
+    const loadAuth = async () => {
+      const start = Date.now();
+      const stored = localStorage.getItem("user");
+
+      if (stored) {
+        try {
+          setAuth(JSON.parse(stored));
+        } catch (e) {
+          console.error("Failed to parse auth from localStorage", e);
+          localStorage.removeItem("user");
+        }
+      }
+
+      const elapsed = Date.now() - start;
+      const remaining = 1000 - elapsed;
+
+      if (remaining > 0) {
+        setTimeout(() => setLoading(false), remaining);
+      } else {
+        setLoading(false);
+      }
+    };
+
+    loadAuth();
   }, []);
 
   const login = (data: AuthData) => {
@@ -47,8 +71,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setAuth(null);
   };
 
+  const update = (data: AuthData) => {
+    login(data);
+  };
+
   return (
-    <AuthContext.Provider value={{ auth, login, logout }}>
+    <AuthContext.Provider value={{ auth, login, logout, update, loading, profileImageUrl, setProfileImageUrl }}>
       {children}
     </AuthContext.Provider>
   );

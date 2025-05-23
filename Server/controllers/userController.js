@@ -154,7 +154,7 @@ export const loginUser = async (email, password, res) => {
 
       const match = await bcrypt.compare(password, user.Password);
       if (match) {
-        return res.status(200).json({ role: "user", data: user });
+        return res.status(200).json({ role: "user", id: user.U_id });
       }
     }
 
@@ -167,7 +167,7 @@ export const loginUser = async (email, password, res) => {
       const helper = resultHelpers.recordset[0];
       const match = await bcrypt.compare(password, helper.Password);
       if (match) {
-        return res.status(200).json({ role: "helper", data: helper });
+        return res.status(200).json({ role: "helper", id: helper.H_id });
       }
     }
 
@@ -179,15 +179,13 @@ export const loginUser = async (email, password, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-  const { email } = req.query.email;
-
-  if (!email) {
-    return res.status(400).json({ message: "User email is required" });
+  if (!req.query.id) {
+    return res.status(400).json({ message: "User id is required" });
   }
 
   try {
     await sql.connect(dbConfig);
-    const result = await sql.query`DELETE FROM Users WHERE Email = ${email}`;
+    const result = await sql.query`DELETE FROM Users WHERE U_id = ${req.query.id}`;
     if (result.rowsAffected[0] === 0) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -195,5 +193,91 @@ export const deleteUser = async (req, res) => {
   } catch (err) {
     console.error("DELETE /users error:", err);
     res.status(500).send("Failed to delete user");
+  }
+};
+
+export const updateUserById = async (req, res) => {
+  const userId = req.query.id;
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required for update" });
+  }
+  try {
+    await sql.connect(dbConfig);
+
+    const fieldsToUpdate = [];
+    if (req.body.Firstname !== undefined)
+      fieldsToUpdate.push(`Firstname = '${req.body.Firstname}'`);
+    if (req.body.Lastname !== undefined)
+      fieldsToUpdate.push(`Lastname = '${req.body.Lastname}'`);
+    if (req.body.Phone !== undefined)
+      fieldsToUpdate.push(`Phone = '${req.body.Phone}'`);
+    if (req.body.Password !== undefined) {
+      const hashed = await bcrypt.hash(req.body.Password, 10);
+      fieldsToUpdate.push(`Password = '${hashed}'`);
+    }
+    if (req.body.I_id !== undefined)
+      fieldsToUpdate.push(`I_id = ${req.body.I_id ?? "NULL"}`);
+
+    if (fieldsToUpdate.length === 0) {
+      return res.status(400).json({ message: "No fields provided for update" });
+    }
+
+    const result = await sql.query(`
+      UPDATE Users
+      SET ${fieldsToUpdate.join(", ")}
+      OUTPUT INSERTED.*
+      WHERE U_id = ${userId}
+    `);
+
+    const row = result.recordset[0];
+
+    if (!row) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const updatedUser = new User(
+      row.U_id,
+      row.Firstname,
+      row.Lastname,
+      row.Email,
+      row.Password,
+      row.Phone,
+      row.I_id,
+      row.Ts_created
+    );
+
+    res.status(200).json([updatedUser]);
+  } catch (err) {
+    console.error("PUT /users error:", err);
+    res.status(500).send("Failed to update user");
+  }
+};
+
+export const changeUserPassword = async (req, res) => {
+  const { U_id, currentPassword, newPassword } = req.body;
+
+  if (!U_id || !currentPassword || !newPassword) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  try {
+    await sql.connect(dbConfig);
+    const result = await sql.query`SELECT * FROM Users WHERE U_id = ${U_id}`;
+
+    const user = result.recordset[0];
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.Password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect current password" });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await sql.query`UPDATE Users SET Password = ${hashed} WHERE U_id = ${U_id}`;
+
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (err) {
+    console.error("Password change error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };

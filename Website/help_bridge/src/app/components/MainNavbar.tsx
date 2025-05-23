@@ -9,12 +9,20 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import Button from "react-bootstrap/Button";
 import LoginRegisterModal from "./LoginRegisterModal";
 import { useRouter } from "next/navigation";
+import { ProfileImage } from "../models/ProfileImage";
 import "./MainNavbar.css";
+import {
+  fetchProfileImageById,
+  fetchHelperById,
+  fetchUserById,
+} from "../utils";
 
 export const MainNavbar = () => {
-  const { auth, logout } = useAuth();
+  const { auth, logout, profileImageUrl, setProfileImageUrl } = useAuth();
   const [showLoginRegisterModal, setShowLoginRegisterModal] = useState(false);
-  const [categories, setCategories] = useState<{ HC_id: number; Name: string }[]>([]);
+  const [categories, setCategories] = useState<
+    { HC_id: number; Name: string }[]
+  >([]);
   const router = useRouter();
 
   const handleShow = () => setShowLoginRegisterModal(true);
@@ -26,7 +34,9 @@ export const MainNavbar = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/helper_categories");
+        const response = await fetch(
+          "http://localhost:5000/api/helper_categories"
+        );
         if (!response.ok) throw new Error("Failed to fetch categories");
         const data = await response.json();
         setCategories(data);
@@ -34,7 +44,36 @@ export const MainNavbar = () => {
         console.error("Error fetching categories:", error);
       }
     };
+    const fetchImage = async () => {
+      if (!auth) return;
+
+      try {
+        let imageId: number | null | undefined;
+
+        if (auth.role === "user") {
+          const dbUser = await fetchUserById(auth.id);
+          if (!dbUser) return;
+          imageId = dbUser.I_id;
+        } else {
+          const dbHelper = await fetchHelperById(auth.id);
+          if (!dbHelper) return;
+          imageId = dbHelper.I_id;
+        }
+
+        if (!imageId) return;
+
+        const imageData = await fetchProfileImageById(imageId);
+        if (imageData) {
+          setProfileImageUrl(
+            ProfileImage.fromByteArrayToImageUrl(imageData.Data.data)
+          );
+        }
+      } catch (err) {
+        console.error("Failed to load profile image:", err);
+      }
+    };
     fetchCategories();
+    fetchImage();
   }, []);
 
   return (
@@ -57,7 +96,11 @@ export const MainNavbar = () => {
                 Home
               </Nav.Link>
 
-              <NavDropdown title="Find help" id="help-nav-dropdown" className="link-text-white">
+              <NavDropdown
+                title="Find help"
+                id="help-nav-dropdown"
+                className="link-text-white"
+              >
                 {categories.length > 0 ? (
                   categories.map((category) => (
                     <NavDropdown.Item
@@ -72,16 +115,12 @@ export const MainNavbar = () => {
                 )}
               </NavDropdown>
 
-              {/* Buton Settings */}
-              {auth && (
-                <Nav.Link onClick={goToSettings} className="link-text-white">
-                  Settings
-                </Nav.Link>
-              )}
-
               {/* Buton Appointments */}
               {auth && (
-                <Nav.Link onClick={goToAppointments} className="link-text-white">
+                <Nav.Link
+                  onClick={goToAppointments}
+                  className="link-text-white"
+                >
                   Appointments
                 </Nav.Link>
               )}
@@ -89,20 +128,30 @@ export const MainNavbar = () => {
 
             {/* Conditional button based on login */}
             {auth ? (
-              <>
-                <span className="text-white me-3">Welcome, {auth.data.Firstname}!</span>
-                <Button variant="light me-3" onClick={goToSettings}>
-                  Settings
-                </Button>
-                <Button variant="light me-3" onClick={goToAppointments}>
-                  Appointments
-                </Button>
-                <Button variant="outline-light" onClick={logout}>
-                  Logout
-                </Button>
-              </>
+              <Nav className="ms-auto">
+                <NavDropdown
+                  title={
+                    <img
+                      src={profileImageUrl}
+                      alt="Profile"
+                      className="rounded-circle"
+                      width="35"
+                      height="35"
+                    />
+                  }
+                  id="profile-dropdown"
+                  align="end"
+                  className="link-text-white"
+                >
+                  <NavDropdown.Item onClick={goToSettings}>
+                    Settings
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
+                </NavDropdown>
+              </Nav>
             ) : (
-              <Button className="btn-light" onClick={handleShow}>
+              <Button className="btn-light ms-auto" onClick={handleShow}>
                 Login
               </Button>
             )}
@@ -111,7 +160,10 @@ export const MainNavbar = () => {
       </Navbar>
 
       {/* Modal for Login/Register */}
-      <LoginRegisterModal show={showLoginRegisterModal} handleClose={handleClose} />
+      <LoginRegisterModal
+        show={showLoginRegisterModal}
+        handleClose={handleClose}
+      />
     </>
   );
 };

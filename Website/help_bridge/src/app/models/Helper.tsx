@@ -158,4 +158,5 @@ export const transformToHelper = (data: any): Helper => {
       bufferToDate(data.Ts_created)
     );
   };
-  
+
+  export type HelperUpdatePayload = Partial<Pick<Helper, "H_id" | "HC_id" | "C_id" | "Firstname" | "Lastname" | "Description" | "Experience" | "Email" | "Phone" | "Password" | "I_id">>;
