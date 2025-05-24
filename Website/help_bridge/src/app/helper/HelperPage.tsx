@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import StarRating from "../components/StarRating";
-import { Briefcase } from "lucide-react";
+import { Briefcase, CodeSquare } from "lucide-react";
 import ReviewCard from "../components/ReviewCard";
 import Calendar from "../components/Calendar";
 import Spinner from "react-bootstrap/Spinner";
@@ -20,12 +20,14 @@ import {
   fetchReviewsByHelperId,
   getAverageRating,
   fetchProfileImageById,
-  fetchAvailabilityByHelperId
+  fetchAvailabilityByHelperId,
 } from "../utils";
+import { useAuth } from "../models/AuthContext";
 import { Availability } from "../models/Availability";
 
 export default function HelperPage() {
   const searchParams = useSearchParams();
+  const { auth } = useAuth();
   const helperID = searchParams.get("helperId");
 
   const [helper, setHelper] = useState<HelperModel | null>(null);
@@ -55,10 +57,10 @@ export default function HelperPage() {
           const reviewsData = await fetchReviewsByHelperId(helperData.H_id);
           setReviews(reviewsData);
 
-          const availabilityData = await fetchAvailabilityByHelperId(helperData.H_id);
+          const availabilityData = await fetchAvailabilityByHelperId(
+            helperData.H_id
+          );
           setAvailability(availabilityData);
-          
-          
 
           // Calculate average rating after setting reviews
           if (reviewsData != null && reviewsData.length > 0) {
@@ -70,8 +72,10 @@ export default function HelperPage() {
           if (helperData.I_id) {
             // Fetch profile image
             const imageData = await fetchProfileImageById(helperData.I_id);
-            if(imageData)
-              setImageUrl(ProfileImage.fromByteArrayToImageUrl(imageData.Data.data));
+            if (imageData)
+              setImageUrl(
+                ProfileImage.fromByteArrayToImageUrl(imageData.Data.data)
+              );
           }
         }
       } catch (err) {
@@ -82,6 +86,70 @@ export default function HelperPage() {
 
     fetchAll();
   }, [helperID]);
+
+  const handleBooking = async (
+    date: string,
+    time: string,
+    title: string,
+    message: string,
+    AV_id: string
+  ) => {
+    if (!auth) {
+      return {
+        success: false,
+        error: "You must be logged in to book a consultation.",
+      };
+    }
+    try {
+      const response = await fetch("http://localhost:5000/api/appointments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          H_id: helperID,
+          Title: title,
+          Message: message,
+          Date: `${date}T${time}:00`,
+          U_id: auth.id,
+          Ts_created: new Date().toISOString(),
+        }),
+      });
+      console.log("Booking response:", response);
+      if (!response.ok) {
+        const data = await response.json();
+        return {
+          success: false,
+          error: data.message || "Failed to create appointment.",
+        };
+      }
+
+      const responseData = await response.json();
+      const A_id = responseData.A_id;
+
+      const updateResponse = await fetch(
+        `http://localhost:5000/api/availability?id=${AV_id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ IsBooked: true, A_id: A_id }),
+        }
+      );
+
+      if (!updateResponse.ok) {
+        return { success: false, error: "Failed to update availability." };
+      }
+      if (helper == null) {
+        return { success: false, error: "Helper data is not available." };
+      }
+      const availabilityData = await fetchAvailabilityByHelperId(helper.H_id);
+      setAvailability(availabilityData);
+      return { success: true };
+    } catch (err) {
+      return {
+        success: false,
+        error: "An unexpected error occurred during booking.",
+      };
+    }
+  };
 
   if (error) {
     return (
@@ -174,8 +242,8 @@ export default function HelperPage() {
           <div className={`calendar-block ${showCalendar ? "show" : ""}`}>
             <Calendar
               availableSlots={availability}
-              onBook={(date, time, title, message) =>
-              {}
+              onBook={(date, time, title, message, AV_id) =>
+                handleBooking(date, time, title, message, AV_id)
               }
             />
           </div>

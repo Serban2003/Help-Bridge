@@ -44,6 +44,25 @@ export const createAvailability = async (req, res) => {
     }
   };
 
+export const updateAvailability = async (req, res) => {
+    if (!req.query.id) {
+      return res.status(400).json({ message: "AV_id is required" });
+    }
+  
+    try {
+      await sql.connect(dbConfig);
+      await sql.query`
+        UPDATE Availability
+        SET IsBooked = ${req.body.IsBooked}, A_id = ${req.body.A_id}
+        WHERE AV_id = ${req.query.id}`;
+  
+      res.status(200).send("Availability updated successfully");
+    } catch (err) {
+      console.error("PUT /availability error:", err);
+      res.status(500).send("Failed to update availability");
+    }
+  }
+
   export const getAvailabilityByHelperId = async (req, res) => {
     const id = req.query.helperId;
   

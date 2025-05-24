@@ -53,21 +53,22 @@ export class Availability {
     this._A_id = value;
   }
 
-  getFormattedTime(): string {
-    return new Date(this._date).toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      });
-  }
+getFormattedTime(): string {
+  const date = new Date(this._date);
+  const hours = String(date.getUTCHours()).padStart(2, "0");
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
 
-  getFormattedDate(): string {
-    return this._date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "2-digit",
-    });
-  }
+
+getFormattedDate(): string {
+  const date = new Date(this._date);
+  const year = date.getUTCFullYear();
+  const month = date.toLocaleString("en-US", { month: "long", timeZone: "UTC" });
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${month} ${day}, ${year}`;
+}
+
 }
 
 export function transformToAvailability(data: any): Availability {

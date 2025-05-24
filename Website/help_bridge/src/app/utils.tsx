@@ -331,10 +331,16 @@ export function bufferToDate(buffer: any): Date {
   return new Date(timestamp * 1000);
 }
 
-export function getFormattedDate(date: Date, type: string) {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  if (type === "yyyy-mm-dd") return `${yyyy}-${mm}-${dd}`;
-  else return `${dd}-${mm}-${yyyy}`;
+export function getFormattedDate(date: Date, type: "yyyy-mm-dd" | "dd-mm-yyyy") {
+  const yyyy = date.getUTCFullYear();
+  const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(date.getUTCDate()).padStart(2, "0");
+
+  if (type === "yyyy-mm-dd") {
+    return `${yyyy}-${mm}-${dd}`;
+  } else if (type === "dd-mm-yyyy") {
+    return `${dd}-${mm}-${yyyy}`;
+  } else {
+    throw new Error(`Invalid date format type: ${type}`);
+  }
 }
