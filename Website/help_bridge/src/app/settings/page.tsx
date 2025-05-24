@@ -46,7 +46,9 @@ export default function SettingsPage() {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [description, setDescription] = useState("");
   const [experience, setExperience] = useState("");
-  const [companyId, setCompanyId] = useState("");
+
+  const [companyImageUrl, setCompanyImageUrl] = useState<string | null>(null);
+
   const [categoryId, setCategoryId] = useState<any>(null);
   const [categories, setCategories] = useState<
     { HC_id: number; Name: string }[]
@@ -62,7 +64,7 @@ export default function SettingsPage() {
     string | null
   >(null);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-
+  const [company, setCompany] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -103,6 +105,29 @@ export default function SettingsPage() {
             .then((res) => res.json())
             .then((data) => setCategories(data))
             .catch((err) => console.error("Failed to load categories:", err));
+
+          const companyRes = await fetch(
+            `http://localhost:5000/api/companies?id=${new_helper.C_id}`
+          );
+          const companyData = await companyRes.json();
+          if (!companyData) {
+            console.error("Failed to fetch company data");
+            return;
+          }
+          setCompany(companyData);
+
+          if (companyData.I_id) {
+            const imageData = await fetchProfileImageById(companyData.I_id);
+            if (imageData) {
+              setCompanyImageUrl(
+                ProfileImage.fromByteArrayToImageUrl(imageData.Data.data)
+              );
+            } else {
+              setCompanyImageUrl("/images/default-company.png"); // fallback if image not found
+            }
+          } else {
+            setCompanyImageUrl("/images/default-company.png"); // fallback if no I_id
+          }
         } catch (err) {
           console.error("Failed to fetch helper:", err);
         }
@@ -293,7 +318,7 @@ export default function SettingsPage() {
       {auth?.role === "user" && user && (
         <>
           <h2>User Settings</h2>
-          <Row className="align-items-center mb-5">
+          <Row className="align-items-center mb-3">
             <Col md={4} className="text-center">
               <img
                 src={profileImageUrl}
@@ -399,7 +424,12 @@ export default function SettingsPage() {
                 <dt>Phone</dt>
                 <dd>{helper.Phone}</dd>
                 <dt>Category</dt>
-                <dd>{categories.find((cat: any) => cat.HC_id === helper.HC_id)?.Name}</dd>
+                <dd>
+                  {
+                    categories.find((cat: any) => cat.HC_id === helper.HC_id)
+                      ?.Name
+                  }
+                </dd>
                 <dd>
                   <span
                     style={{
@@ -428,6 +458,35 @@ export default function SettingsPage() {
               </Button>
             </Col>
           </Row>
+          {company && (
+  <div className="card  shadow-sm">
+    <div className="card-body">
+      <h5 className="card-title fw-bold mb-3 text-center text-md-start">
+        Company Information
+      </h5>
+      <div className="d-flex flex-column flex-md-row align-items-center gap-3">
+        <img
+          src={companyImageUrl || "/images/default-company.png"}
+          alt="Company Logo"
+          className="rounded"
+          style={{ width: 120, height: 120, objectFit: "cover" }}
+        />
+        <div className="text-center text-md-start">
+          <p className="mb-1">
+            <strong>Name:</strong> {company.Name}
+          </p>
+          <p className="mb-1">
+            <strong>Description:</strong> {company.Description}
+          </p>
+          <p className="mb-0">
+            <strong>Address:</strong> {company.Address}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
         </>
       )}
       {user && (
@@ -473,7 +532,6 @@ export default function SettingsPage() {
                   }}
                 />
               </Form.Group>
-
             </Form>
             {userEditError && (
               <div className="text-danger text-center mt-3">
@@ -585,17 +643,6 @@ export default function SettingsPage() {
                     </option>
                   ))}
                 </Form.Select>
-              </Form.Group>
-
-              <Form.Group controlId="helperCompanyId" className="mb-3">
-                <Form.Label>Company ID</Form.Label>
-                <Form.Control
-                  type="text"
-                  defaultValue={helper.C_id}
-                  onChange={(e) => {
-                    setCompanyId(e.target.value);
-                  }}
-                />
               </Form.Group>
             </Form>
             {userEditError && (
