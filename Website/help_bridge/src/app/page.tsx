@@ -5,15 +5,18 @@ import Banner from "./components/Banner";
 import MissionSection from "./components/MissionSection";
 import OfferSection from "./components/OffersSection";
 import WhyChooseUsSection from "./components/WhyChooseUsSection";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <div className={styles.page}>
       <Banner
           imageUrl="/images/consulting_banner.jpeg"
           title="Expert advice made easy - book, connect, grow"
           buttonText="Book a consultation"
-          onClick={() => console.log("CTA clicked!")}
+          onClick={() => router.push("/search")}
         />
       <main className={styles.main}>
         <div className="px-md-5 px-2">

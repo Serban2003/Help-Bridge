@@ -89,6 +89,19 @@ export const changeUserPassword = async (U_id: number | string, current: string,
 
 
 // HELPERS
+export const fetchAllHelpers = async (): Promise<Helper[] | null> => {
+  try {
+    const response = await fetch("http://localhost:5000/api/helpers");
+    if (!response.ok) throw new Error("Failed to fetch helpers");
+
+    const data = await response.json();
+    return data.map((item: any) => transformToHelper(item));
+  } catch (error) {
+    console.error("Error fetching helpers:", error);
+    return null;
+  }
+}
+
 export const fetchHelperById = async (
   helperId: number | string
 ): Promise<Helper | null> => {
@@ -191,6 +204,19 @@ export const changeHelperPassword = async (
 
 
 // HELP CATEGORIES
+export const fetchAllHelperCategories = async (): Promise<HelperCategory[] | null> => {
+  try {
+    const response = await fetch("http://localhost:5000/api/helper_categories");
+    if (!response.ok) throw new Error("Failed to fetch categories");
+
+    const data = await response.json();
+    return data.map((item: any) => transformToCategory(item));
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return null;
+  }
+}
+
 export const fetchHelperCategoryById = async (
   categoryId: number | string
 ): Promise<HelperCategory | null> => {

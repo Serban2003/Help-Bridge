@@ -113,6 +113,7 @@ export const MainNavbar = () => {
                 ) : (
                   <NavDropdown.Item disabled>Loading...</NavDropdown.Item>
                 )}
+                <NavDropdown.Item href="/search">All Helpers</NavDropdown.Item>
               </NavDropdown>
 
               {/* Buton Appointments */}
