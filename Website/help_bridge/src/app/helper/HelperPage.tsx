@@ -21,9 +21,14 @@ import {
   getAverageRating,
   fetchProfileImageById,
   fetchAvailabilityByHelperId,
+  createAppointment,
+  updateAvailability,
 } from "../utils";
 import { useAuth } from "../models/AuthContext";
 import { Availability } from "../models/Availability";
+import { Appointment } from "../models/Appointment";
+import App from "next/app";
+import { on } from "events";
 
 export default function HelperPage() {
   const searchParams = useSearchParams();
@@ -101,40 +106,34 @@ export default function HelperPage() {
       };
     }
     try {
-      const response = await fetch("http://localhost:5000/api/appointments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          H_id: helperID,
-          Title: title,
-          Message: message,
-          Date: `${date}T${time}:00`,
-          U_id: auth.id,
-          Ts_created: new Date().toISOString(),
-        }),
-      });
-      console.log("Booking response:", response);
-      if (!response.ok) {
-        const data = await response.json();
+      if (helper == null) {
         return {
           success: false,
-          error: data.message || "Failed to create appointment.",
+          error: "Helper data is not available.",
         };
       }
-
-      const responseData = await response.json();
-      const A_id = responseData.A_id;
-
-      const updateResponse = await fetch(
-        `http://localhost:5000/api/availability?id=${AV_id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ IsBooked: true, A_id: A_id }),
-        }
+      const A_id = await createAppointment(
+        new Appointment(
+          0,
+          helper.H_id || 0,
+          auth.id,
+          0,
+          title,
+          message,
+          new Date(date + " " + time),
+          new Date()
+        )
       );
 
-      if (!updateResponse.ok) {
+      if (!A_id) {
+        return {
+          success: false,
+          error: "Failed to create appointment.",
+        };
+      }
+      const response = await updateAvailability(AV_id, A_id, true);
+
+      if (!response) {
         return { success: false, error: "Failed to update availability." };
       }
       if (helper == null) {

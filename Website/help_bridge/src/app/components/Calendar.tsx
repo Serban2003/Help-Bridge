@@ -3,16 +3,24 @@ import { Modal, Button } from "react-bootstrap";
 import "./Calendar.css";
 import "./../globals.css";
 import { Availability } from "../models/Availability";
-import { getFormattedDate } from "../utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "../models/AuthContext";
 
 interface CalendarProps {
   availableSlots: Availability[] | null;
-  onBook: (date: string, time: string, title: string, message: string, AV_id: string) => any;
+  onBook: (
+    date: string,
+    time: string,
+    title: string,
+    message: string,
+    AV_id: string
+  ) => any;
 }
 
 const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
   const today = new Date();
+  const [currentYear, setCurrentYear] = useState(today.getUTCFullYear());
+  const [currentMonth, setCurrentMonth] = useState(today.getUTCMonth());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedAvailability, setSelectedAvailability] = useState<any>(null);
@@ -23,113 +31,147 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
   const [bookingError, setBookingError] = useState<string>("");
   const year = today.getFullYear();
   const month = today.getMonth();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
+  const daysInMonth = new Date(
+    Date.UTC(currentYear, currentMonth + 1, 0)
+  ).getUTCDate();
+  const firstDayOfWeek = new Date(
+    Date.UTC(currentYear, currentMonth, 1)
+  ).getUTCDay();
   // Book the selected slot
-  const handleBook = async() => {
+  const handleBook = async () => {
     if (!auth) {
       setBookingError("You must be logged in to book a consultation.");
       return;
     }
     if (selectedDate && selectedTime && title.trim() && message.trim()) {
-      const result = await onBook(selectedDate, selectedTime, title, message, selectedAvailability);
+      const result = await onBook(
+        selectedDate,
+        selectedTime,
+        title,
+        message,
+        selectedAvailability
+      );
 
-    if (!result.success) {
-      setBookingError(result.error || "Failed to book appointment.");
-    } else {
-      setShowSuccessModal(true);
-      setBookingError("");
-    }
+      if (!result.success) {
+        setBookingError(result.error || "Failed to book appointment.");
+      } else {
+        setShowSuccessModal(true);
+        setBookingError("");
+      }
     } else {
       setBookingError("Please fill in all fields before booking.");
     }
   };
 
   const renderCalendarDays = () => {
-  const firstDayOfWeek = new Date(Date.UTC(year, month, 1)).getUTCDay();
-  const calendar: JSX.Element[] = [];
+    const calendar: JSX.Element[] = [];
 
-  // Empty cells before the first day of the month
-  for (let i = 0; i < firstDayOfWeek; i++) {
-    calendar.push(<div key={`empty-${i}`} className="calendar-day empty" />);
-  }
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      calendar.push(<div key={`empty-${i}`} className="calendar-day empty" />);
+    }
 
-  // Render the actual days
-  for (let day = 1; day <= daysInMonth; day++) {
-    const currentDateUTC = new Date(Date.UTC(year, month, day));
-    const dateStr = getFormattedDate(currentDateUTC, "yyyy-mm-dd");
+    for (let day = 1; day <= daysInMonth; day++) {
+      const currentDateUTC = new Date(Date.UTC(currentYear, currentMonth, day));
+      const dateStr = currentDateUTC.toISOString().split("T")[0];
 
-    const availableSlot = availableSlots?.find((slot : Availability) => {
-      let slotDateStr;
-  
+      const hasAvailableSlot = availableSlots?.some((slot) => {
+        const slotDateStr =
+          slot.Date instanceof Date
+            ? slot.Date.toISOString().split("T")[0]
+            : new Date(slot.Date).toISOString().split("T")[0];
+        return slotDateStr === dateStr && slot.IsBooked == 0;
+      });
 
-      if (slot.Date instanceof Date) {
-        slotDateStr = slot.Date.toISOString().split("T")[0];
-      } else if (typeof slot.Date === "string") {
-        slotDateStr = new Date(slot.Date).toISOString().split("T")[0];
-      } else {
-        return false;
-      }
+      const todayUTC = new Date();
+      const todayMidnightUTC = Date.UTC(
+        todayUTC.getUTCFullYear(),
+        todayUTC.getUTCMonth(),
+        todayUTC.getUTCDate()
+      );
+      const currentDateMillisUTC = Date.UTC(currentYear, currentMonth, day);
+      const isPast = currentDateMillisUTC < todayMidnightUTC;
 
-      return slotDateStr === dateStr;
-    });
+      calendar.push(
+        <div
+          key={day}
+          className={`calendar-day rounded ${
+            hasAvailableSlot && !isPast ? "available" : "disabled"
+          } ${selectedDate === dateStr ? "selected" : ""}`}
+          onClick={() => {
+            if (hasAvailableSlot && !isPast) {
+              setSelectedDate(dateStr);
+              setSelectedTime(null);
+              setSelectedAvailability(null);
+            }
+          }}
+        >
+          {day}
+        </div>
+      );
+    }
 
-    const isAvailable = !!availableSlot && availableSlot.IsBooked == 0;
-
-    // Check if this day (UTC) is before today (UTC midnight)
-    const todayUTC = new Date();
-    const todayMidnightUTC = Date.UTC(
-      todayUTC.getUTCFullYear(),
-      todayUTC.getUTCMonth(),
-      todayUTC.getUTCDate()
-    );
-    const currentDateMillisUTC = Date.UTC(year, month, day);
-    const isPast = currentDateMillisUTC < todayMidnightUTC;
-    calendar.push(
-      <div
-        key={day}
-        className={`calendar-day rounded ${
-          isAvailable && !isPast ? "available" : "disabled"
-        } ${selectedDate === dateStr ? "selected" : ""}`}
-        onClick={() => {
-          if (isAvailable && !isPast) {
-            setSelectedDate(dateStr);
-            setSelectedTime(null);
-            setSelectedAvailability(null);
-          }
-        }}
-      >
-        {day}
-      </div>
-    );
-  }
-
-  return calendar;
-};
-
+    return calendar;
+  };
 
   return (
     <>
       <div className="calendar-booking p-4 border rounded bg-white shadow-sm">
-        <h5 className="fw-bold mb-3">Select a Consultation Date</h5>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <Button
+            variant="outline-button-custom"
+            onClick={() => {
+              setSelectedDate(null);
+              setSelectedTime(null);
+              if (currentMonth === 0) {
+                setCurrentYear(currentYear - 1);
+                setCurrentMonth(11);
+              } else {
+                setCurrentMonth(currentMonth - 1);
+              }
+            }}
+          >
+            <ChevronLeft />
+          </Button>
+          <h5>
+            {new Date(Date.UTC(currentYear, currentMonth)).toLocaleString("default", {
+              month: "long",
+              year: "numeric",
+              timeZone: "UTC",
+            })}
+          </h5>
+          <Button
+            variant="outline-button-custom"
+            onClick={() => {
+              setSelectedDate(null);
+              setSelectedTime(null);
+              if (currentMonth === 11) {
+                setCurrentYear(currentYear + 1);
+                setCurrentMonth(0);
+              } else {
+                setCurrentMonth(currentMonth + 1);
+              }
+            }}
+          >
+            <ChevronRight />
+          </Button>
+        </div>
 
+        <h5 className="fw-bold mb-3">Select a Consultation Date</h5>
         <div className="calendar-grid mb-4">{renderCalendarDays()}</div>
 
         {selectedDate && (
           <>
             <h6 className="fw-semibold mb-2">
-              Available times on{" "}
-              {getFormattedDate(new Date(selectedDate), "dd-mm-yyyy")}
+              Available times on {new Date(selectedDate).toLocaleDateString("en-GB")}
             </h6>
             <div className="d-flex flex-wrap gap-2 mb-3">
-              {(
-                availableSlots?.filter((slot) => {
-                  console.log("Slot Date:", slot.IsBooked);
-                  const slotDate =
-                    slot.Date instanceof Date ? slot.Date : new Date(slot.Date);
-                  return slotDate.toISOString().split("T")[0] === selectedDate && (slot.IsBooked == 0);
-                }) || []
-              ).map((slot) => (
+              {(availableSlots?.filter((slot) => {
+                const slotDate =
+                  slot.Date instanceof Date ? slot.Date : new Date(slot.Date);
+                return (
+                  slotDate.toISOString().split("T")[0] === selectedDate && slot.IsBooked == 0
+                );
+              }) || []).map((slot) => (
                 <Button
                   key={slot.AV_id}
                   className={
@@ -137,7 +179,8 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
                       ? "toggle-button-custom-active"
                       : "toggle-button-custom"
                   }
-                  onClick={() => {setSelectedTime(slot.getFormattedTime())
+                  onClick={() => {
+                    setSelectedTime(slot.getFormattedTime());
                     setSelectedAvailability(slot.AV_id.toString());
                     setBookingError("");
                   }}

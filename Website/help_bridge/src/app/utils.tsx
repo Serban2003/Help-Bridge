@@ -4,6 +4,7 @@ import { HelperCategory, transformToCategory } from "./models/HelperCategory";
 import { Review, transformToReview } from "./models/Review";
 import { ProfileImage, transformToProfileImage } from "./models/ProfileImage";
 import { Availability, transformToAvailability } from "./models/Availability";
+import { Appointment } from "./models/Appointment";
 
 // USERS
 export const fetchUserById = async (
@@ -71,12 +72,19 @@ export const deleteUser = async (userId: string | number): Promise<boolean> => {
   }
 };
 
-
-export const changeUserPassword = async (U_id: number | string, current: string, newPass: string) => {
+export const changeUserPassword = async (
+  U_id: number | string,
+  current: string,
+  newPass: string
+) => {
   const res = await fetch(`http://localhost:5000/api/users/change-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ U_id, currentPassword: current, newPassword: newPass }),
+    body: JSON.stringify({
+      U_id,
+      currentPassword: current,
+      newPassword: newPass,
+    }),
   });
 
   if (!res.ok) {
@@ -86,7 +94,6 @@ export const changeUserPassword = async (U_id: number | string, current: string,
 
   return await res.json();
 };
-
 
 // HELPERS
 export const fetchAllHelpers = async (): Promise<Helper[] | null> => {
@@ -100,7 +107,7 @@ export const fetchAllHelpers = async (): Promise<Helper[] | null> => {
     console.error("Error fetching helpers:", error);
     return null;
   }
-}
+};
 
 export const fetchHelperById = async (
   helperId: number | string
@@ -136,7 +143,9 @@ export const fetchHelperByCategoryId = async (
   }
 };
 
-export const deleteHelper = async (helperId: string | number): Promise<boolean> => {
+export const deleteHelper = async (
+  helperId: string | number
+): Promise<boolean> => {
   try {
     const response = await fetch(
       `http://localhost:5000/api/helpers?id=${helperId}`,
@@ -191,7 +200,11 @@ export const changeHelperPassword = async (
   const res = await fetch("http://localhost:5000/api/helpers/change-password", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ H_id, currentPassword: current, newPassword: newPass }),
+    body: JSON.stringify({
+      H_id,
+      currentPassword: current,
+      newPassword: newPass,
+    }),
   });
 
   if (!res.ok) {
@@ -202,9 +215,10 @@ export const changeHelperPassword = async (
   return await res.json();
 };
 
-
 // HELP CATEGORIES
-export const fetchAllHelperCategories = async (): Promise<HelperCategory[] | null> => {
+export const fetchAllHelperCategories = async (): Promise<
+  HelperCategory[] | null
+> => {
   try {
     const response = await fetch("http://localhost:5000/api/helper_categories");
     if (!response.ok) throw new Error("Failed to fetch categories");
@@ -215,7 +229,7 @@ export const fetchAllHelperCategories = async (): Promise<HelperCategory[] | nul
     console.error("Error fetching categories:", error);
     return null;
   }
-}
+};
 
 export const fetchHelperCategoryById = async (
   categoryId: number | string
@@ -317,6 +331,101 @@ export const fetchAvailabilityByHelperId = async (
   }
 };
 
+export const updateAvailability = async (
+  AV_id: number | string,
+  A_id: number | string,
+  IsBooked: boolean
+): Promise<any | null> => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/availability?id=${AV_id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          IsBooked: IsBooked,
+          A_id: A_id, // assuming you actually need A_id sent
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to update availability");
+    }
+
+    const result = await response.json();
+    console.log("Availability update result:", result);
+    return result;
+  } catch (error) {
+    console.error("Error updating availability:", error);
+    return null;
+  }
+};
+
+// Appointments
+export const createAppointment = async (
+  appointment: Appointment
+): Promise<number | null> => {
+  try {
+    const response = await fetch("http://localhost:5000/api/appointments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        H_id: appointment.H_id,
+        Title: appointment.Title,
+        Message: appointment.Message,
+        Date: appointment.Date.toISOString(),
+        U_id: appointment.U_id,
+      }),
+    });
+
+    if (!response.ok) throw new Error("Failed to create appointment");
+
+    const data = await response.json();
+    return data.A_id; // Assuming A_id is the appointment ID
+  } catch (error) {
+    console.error("Error creating appointment:", error);
+    return null;
+  }
+};
+
+export const fetchAppointmentsByUserId = async (
+  userId: number | string
+): Promise<any[] | null> => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/appointments?userId=${userId}`
+    );
+    if (!response.ok) throw new Error("Failed to fetch appointments");
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    return null;
+  }
+};
+export const fetchAppointmentsByHelperId = async (
+  helperId: number | string
+): Promise<any[] | null> => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/appointments?helperId=${helperId}`
+    );
+    if (!response.ok) throw new Error("Failed to fetch appointments");
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    return null;
+  }
+};
 // MISC
 export function bufferToDate(buffer: any): Date {
   // Extract the integer from the buffer
@@ -331,7 +440,10 @@ export function bufferToDate(buffer: any): Date {
   return new Date(timestamp * 1000);
 }
 
-export function getFormattedDate(date: Date, type: "yyyy-mm-dd" | "dd-mm-yyyy") {
+export function getFormattedDate(
+  date: Date,
+  type: "yyyy-mm-dd" | "dd-mm-yyyy"
+) {
   const yyyy = date.getUTCFullYear();
   const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
   const dd = String(date.getUTCDate()).padStart(2, "0");

@@ -54,28 +54,28 @@ export class Appointment {
   set R_id(value: number) {
     this._R_id = value;
   }
-  get title(): string {
+  get Title(): string {
     return this._title;
   }
-  set title(value: string) {
+  set Title(value: string) {
     this._title = value;
   }
-  get message(): string {
+  get Message(): string {
     return this._message;
   }
-  set message(value: string) {
+  set Message(value: string) {
     this._message = value;
   }
-  get date(): Date {
+  get Date(): Date {
     return this._date;
   }
-  set date(value: Date) {
+  set Date(value: Date) {
     this._date = value;
   }
-  get ts_created(): Date {
+  get Ts_created(): Date {
     return this._ts_created;
   }
-  set ts_created(value: Date) {
+  set Ts_created(value: Date) {
     this._ts_created = value;
   }
   toString(): string {
@@ -89,9 +89,9 @@ export function transformToAppointment(data: any): Appointment {
     data.H_id,
     data.U_id,
     data.R_id,
-    data.title,
-    data.message,
-    data.date,
+    data.Title,
+    data.Message,
+    data.Date,
     bufferToDate(data.Ts_created)
   );
 }

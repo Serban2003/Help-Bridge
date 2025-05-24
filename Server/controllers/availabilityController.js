@@ -56,10 +56,10 @@ export const updateAvailability = async (req, res) => {
         SET IsBooked = ${req.body.IsBooked}, A_id = ${req.body.A_id}
         WHERE AV_id = ${req.query.id}`;
   
-      res.status(200).send("Availability updated successfully");
+      res.status(200).json({ message: "Availability updated successfully" });
     } catch (err) {
       console.error("PUT /availability error:", err);
-      res.status(500).send("Failed to update availability");
+       res.status(500).json({ message: "Failed to update availability" });
     }
   }
 
