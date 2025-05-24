@@ -47,7 +47,9 @@ export default function SettingsPage() {
   const [description, setDescription] = useState("");
   const [experience, setExperience] = useState("");
 
-  const [companyImageUrl, setCompanyImageUrl] = useState<string | null>(null);
+  const [companyImageUrl, setCompanyImageUrl] = useState<string>(
+    "/images/default-company.png"
+  );
 
   const [categoryId, setCategoryId] = useState<any>(null);
   const [categories, setCategories] = useState<

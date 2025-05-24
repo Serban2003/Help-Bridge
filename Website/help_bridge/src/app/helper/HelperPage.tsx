@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import StarRating from "../components/StarRating";
-import { Briefcase, CodeSquare } from "lucide-react";
+import { Briefcase, Layers } from "lucide-react";
 import ReviewCard from "../components/ReviewCard";
 import Calendar from "../components/Calendar";
 import Spinner from "react-bootstrap/Spinner";
@@ -27,8 +27,7 @@ import {
 import { useAuth } from "../models/AuthContext";
 import { Availability } from "../models/Availability";
 import { Appointment } from "../models/Appointment";
-import App from "next/app";
-import { on } from "events";
+import { Modal, Button } from "react-bootstrap";
 
 export default function HelperPage() {
   const searchParams = useSearchParams();
@@ -41,6 +40,11 @@ export default function HelperPage() {
   const [availability, setAvailability] = useState<Availability[] | null>(null);
   const [imageUrl, setImageUrl] = useState<string>(
     "/images/default-avatar.jpg"
+  );
+  const [showCompanyModal, setShowCompanyModal] = useState(false);
+  const [company, setCompany] = useState<any>(null);
+  const [companyImageUrl, setCompanyImageUrl] = useState<string>(
+    "/images/default-company.png"
   );
   const [showCalendar, setShowCalendar] = useState(false);
   const [error, setError] = useState<string>("");
@@ -81,6 +85,28 @@ export default function HelperPage() {
               setImageUrl(
                 ProfileImage.fromByteArrayToImageUrl(imageData.Data.data)
               );
+          }
+          const companyRes = await fetch(
+            `http://localhost:5000/api/companies?id=${helperData.C_id}`
+          );
+          const companyData = await companyRes.json();
+          if (!companyData) {
+            console.error("Failed to fetch company data");
+            return;
+          }
+          setCompany(companyData);
+
+          if (companyData.I_id) {
+            const imageData = await fetchProfileImageById(companyData.I_id);
+            if (imageData) {
+              setCompanyImageUrl(
+                ProfileImage.fromByteArrayToImageUrl(imageData.Data.data)
+              );
+            } else {
+              setCompanyImageUrl("/images/default-company.png"); // fallback if image not found
+            }
+          } else {
+            setCompanyImageUrl("/images/default-company.png"); // fallback if no I_id
           }
         }
       } catch (err) {
@@ -182,20 +208,42 @@ export default function HelperPage() {
               </div>
             </div>
 
-            <div className="col-lg-8">
-              <h1 className="fw-bold">{`${helper.getFullName()}`}</h1>
-              <p className="text-muted mb-1">{category?.Name || "General"}</p>
+            <div className="col-lg-8 d-flex flex-column gap-2">
+              <h1 className="fw-bold">{helper.getFullName()}</h1>
+              <p className="text-muted mb-0 d-flex align-items-center">
+                <Layers size={18} className="me-2 text-muted" />
+                {category?.Name || "General"}
+              </p>
 
-              <p className="mb-2 text-secondary d-flex align-items-center">
+              <p className="text-secondary d-flex align-items-center mb-0">
                 <Briefcase size={18} className="me-2 text-muted" />
                 <strong>Experience:</strong>&nbsp;
-                {`${helper.getFormatedExperience()}`}
+                {helper.getFormatedExperience()}
               </p>
 
               <StarRating rating={averageRating} editable={false} />
-              <p className="mt-3">{helper.Description}</p>
+              <p className="mb-0">{helper.Description}</p>
 
-              <div className="mt-4 d-flex gap-3 flex-wrap">
+              {/* Company block */}
+              {company && (
+                <div className="mt-2">
+                  <div
+                    className="d-inline-flex align-items-center gap-3 cursor-pointer"
+                    onClick={() => setShowCompanyModal(true)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <img
+                      src={companyImageUrl || "/images/default-company.png"}
+                      alt="Company Logo"
+                      className="rounded"
+                      style={{ width: 40, height: 40, objectFit: "cover" }}
+                    />
+                    <h5 className="mb-0">{company.Name}</h5>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-2 d-flex gap-3 flex-wrap">
                 <button
                   className="btn outline-button-custom px-4"
                   onClick={() => setShowCalendar(!showCalendar)}
@@ -248,6 +296,49 @@ export default function HelperPage() {
           </div>
         </div>
       </section>
+      {/* Company Details Modal */}
+      {company && (
+        <Modal
+          show={showCompanyModal}
+          onHide={() => setShowCompanyModal(false)}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Company Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="card-body">
+              <div className="d-flex flex-column flex-md-row align-items-center gap-3">
+                <img
+                  src={companyImageUrl || "/images/default-company.png"}
+                  alt="Company Logo"
+                  className="rounded"
+                  style={{ width: 120, height: 120, objectFit: "cover" }}
+                />
+                <div className="text-center text-md-start">
+                  <p className="mb-1">
+                    <strong>Name:</strong> {company.Name}
+                  </p>
+                  <p className="mb-1">
+                    <strong>Description:</strong> {company.Description}
+                  </p>
+                  <p className="mb-0">
+                    <strong>Address:</strong> {company.Address}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setShowCompanyModal(false)}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </>
   );
 }
