@@ -34,7 +34,7 @@ create table dbo.Profile_Images
     I_id int identity
         constraint Profile_Images_pk
             primary key,
-    Name varchar(255)    not null,
+    Name varchar(255)   not null,
     Data varbinary(max) not null
 )
 go
@@ -106,12 +106,14 @@ create table dbo.Reviews
             primary key,
     H_id        int          not null
         constraint Reviews_Helpers_H_id_fk
-            references dbo.Helpers,
+            references dbo.Helpers
+            on delete cascade,
     Title       varchar(255) not null,
     Description varchar(255) not null,
     U_id        int          not null
         constraint Reviews_Users_U_id_fk
-            references dbo.Users,
+            references dbo.Users
+            on delete cascade,
     Rating      float        not null,
     Ts_created  timestamp    not null
 )
@@ -124,13 +126,15 @@ create table dbo.Appointments
             primary key,
     H_id       int          not null
         constraint Appointments_Helpers_H_id_fk
-            references dbo.Helpers,
+            references dbo.Helpers
+            on delete cascade,
     Title      varchar(255) not null,
     Message    varchar(255) not null,
     Date       datetime     not null,
     U_id       int          not null
         constraint Appointments_Users_U_id_fk
-            references dbo.Users,
+            references dbo.Users
+            on delete cascade,
     R_id       int
         constraint Appointments_Reviews_R_id_fk
             references dbo.Reviews,
@@ -138,19 +142,20 @@ create table dbo.Appointments
 )
 go
 
-create table Availability
+create table dbo.Availability
 (
     AV_id    int identity
         constraint Availability_pk
             primary key,
     H_id     int      not null
         constraint Availability_Helpers_H_id_fk
-            references Helpers,
+            references dbo.Helpers
+            on delete cascade,
     Date     datetime not null,
     IsBooked bit      not null,
     A_id     int
         constraint Availability_Appointments_A_id_fk
-            references Appointments
+            references dbo.Appointments
 )
 go
 
