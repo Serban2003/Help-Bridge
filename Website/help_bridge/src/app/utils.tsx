@@ -453,6 +453,7 @@ export const fetchAppointmentsByUserId = async (
     if (!response.ok) throw new Error("Failed to fetch appointments");
 
     const data = await response.json();
+        console.log("Fetched appointments:", data);
     return data;
   } catch (error) {
     console.error("Error fetching appointments:", error);
@@ -469,8 +470,6 @@ export const fetchAppointmentsByHelperId = async (
     if (!response.ok) throw new Error("Failed to fetch appointments");
 
     const data = await response.json();
-    console.log("Fetched appointments:", data);
-   
     return data;
   } catch (error) {
     console.error("Error fetching appointments:", error);

@@ -31,9 +31,9 @@ export default function AppointmentsPage() {
 
   useEffect(() => {
     if (!auth) {
-        router.push("/");
-        return;
-      }
+      router.push("/");
+      return;
+    }
 
     const loadData = async () => {
       try {
@@ -85,35 +85,43 @@ export default function AppointmentsPage() {
     }
   };
 
-  const handleCancelAppointment = async (appointmentId : any) => {
-  if (!auth) {
-    setFeedbackMessage("You must be logged in to cancel an appointment.");
-    setFeedbackType("error");
-    return;
-  }
-  try {
-    const res = await fetch(`http://localhost:5000/api/appointments?id=${appointmentId}`, {
-      method: "DELETE",
-    });
+  const handleCancelAppointment = async (appointmentId: any) => {
+    if (!auth) {
+      setFeedbackMessage("You must be logged in to cancel an appointment.");
+      setFeedbackType("error");
+      return;
+    }
 
-    if (!res.ok) throw new Error("Failed to cancel appointment");
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/appointments?id=${appointmentId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-    const updated = await fetchAppointmentsByHelperId(auth.id);
-    setAppointments(updated);
+      if (!res.ok) throw new Error("Failed to cancel appointment");
 
-     // Refresh the availability list
-    const updatedAvailability = await fetchAvailabilityByHelperId(auth.id);
-    setAvailability(updatedAvailability);
+      let updatedAppointments;
 
-    setFeedbackMessage("Appointment cancelled successfully.");
-    setFeedbackType("success");
-  } catch (err) {
-    console.error("Error cancelling appointment:", err);
-    setFeedbackMessage("Failed to cancel appointment. Please try again.");
-    setFeedbackType("error");
-  }
-};
+      if (auth.role === "helper") {
+        updatedAppointments = await fetchAppointmentsByHelperId(auth.id);
+        const updatedAvailability = await fetchAvailabilityByHelperId(auth.id);
+        setAvailability(updatedAvailability);
+      } else if (auth.role === "user") {
+        updatedAppointments = await fetchAppointmentsByUserId(auth.id);
+      }
 
+      setAppointments(updatedAppointments);
+
+      setFeedbackMessage("Appointment cancelled successfully.");
+      setFeedbackType("success");
+    } catch (err) {
+      console.error("Error cancelling appointment:", err);
+      setFeedbackMessage("Failed to cancel appointment. Please try again.");
+      setFeedbackType("error");
+    }
+  };
 
   return (
     <div className="container py-4">
@@ -131,7 +139,7 @@ export default function AppointmentsPage() {
             </>
           )}
 
-          <h2 className="mt-4">Appointments by Day</h2>
+          <h2 className="mt-4">Your Appointments</h2>
           {!appointments || appointments.length === 0 ? (
             <p>No appointments found.</p>
           ) : (
@@ -151,10 +159,21 @@ export default function AppointmentsPage() {
                         <h5 className="mb-1">{appt.Title}</h5>
                         <p className="mb-1 text-muted">{appt.Message}</p>
                         <small className="text-secondary">
-                          <strong>
-                            {appt.User?.Firstname} {appt.User?.Lastname}
-                          </strong>{" "}
-                          — {dateStr} at {timeStr} UTC
+                          {auth && auth.role === "helper" ? (
+                            <>
+                              <strong>
+                                {appt.User?.Firstname} {appt.User?.Lastname}
+                              </strong>{" "}
+                              — {dateStr} at {timeStr} UTC
+                            </>
+                          ) : (
+                            <>
+                              <strong>
+                                {appt.Helper?.Firstname} {appt.Helper?.Lastname}
+                              </strong>{" "}
+                              — {dateStr} at {timeStr} UTC
+                            </>
+                          )}
                         </small>
                       </Col>
                       <Col className="col-md-4 col-12 text-md-end">
@@ -176,7 +195,6 @@ export default function AppointmentsPage() {
                             ? "text-success"
                             : "text-danger"
                         } mt-3 mb-0`}
-                      
                       >
                         {feedbackMessage}
                       </p>

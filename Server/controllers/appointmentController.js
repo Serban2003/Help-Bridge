@@ -102,26 +102,28 @@ export const getAppointmentsByUserId = async (req, res) => {
   try {
     await sql.connect(dbConfig);
     const result = await sql.query(
-      `SELECT * FROM Appointments WHERE U_Id = ${id}`
+       `SELECT a.A_id, a.Date, a.Title, a.Message, h.H_id, h.Firstname, h.Lastname, h.I_id
+      FROM Appointments a
+      JOIN Helpers h ON h.H_id = a.H_id
+      WHERE a.U_id = ${id}`
     );
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "Appointments not found" });
     }
 
-    const appointments = result.recordset.map(
-      (row) =>
-        new Appointment(
-          row.A_id,
-          row.H_id,
-          row.Title,
-          row.Message,
-          row.Date,
-          row.U_id,
-          row.R_id,
-          row.Ts_created
-        )
-    );
+    const appointments = result.recordset.map((row) => ({
+      A_id: row.A_id,
+      Date: row.Date,
+      Title: row.Title,
+      Message: row.Message,
+      Helper: {
+        H_id: row.H_id,
+        Firstname: row.Firstname,
+        Lastname: row.Lastname,
+        ImageUrl: row.I_id ? `/api/images/${row.I_id}` : null, // adjust if needed
+      },
+    }));
     res.status(200).json(appointments);
   } catch (err) {
     console.error("GET /appointments error:", err);
