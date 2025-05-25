@@ -87,6 +87,7 @@ export const MainNavbar = () => {
               width="50"
               height="50"
               className="d-inline-block align-top"
+              style={{objectFit: "cover"}}
             />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
