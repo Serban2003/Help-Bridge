@@ -29,6 +29,15 @@ export default function AppointmentsPage() {
     number | null
   >(null);
 
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewAppointmentId, setReviewAppointmentId] = useState<number | null>(
+    null
+  );
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [reviewDescription, setReviewDescription] = useState("");
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewHelperId, setReviewHelperId] = useState<number | null>(null);
+
   useEffect(() => {
     if (!auth) {
       router.push("/");
@@ -123,6 +132,49 @@ export default function AppointmentsPage() {
     }
   };
 
+  const createReview = async () => {
+    if (!auth) return;
+    if (!reviewHelperId || !reviewAppointmentId) {
+      setFeedbackMessage("Missing review target.");
+      setFeedbackType("error");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          H_id: reviewHelperId,
+          Title: reviewTitle,
+          Description: reviewDescription,
+          U_id: auth.id,
+          Rating: reviewRating,
+          A_id: reviewAppointmentId,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to submit review");
+
+      const result = await res.json();
+
+      setFeedbackMessage(`Review submitted successfully.`);
+      setFeedbackType("success");
+      setShowReviewModal(false);
+
+      // Refresh appointments to reflect updated R_id
+      const updatedAppointments =
+        auth.role === "helper"
+          ? await fetchAppointmentsByHelperId(auth.id)
+          : await fetchAppointmentsByUserId(auth.id);
+      setAppointments(updatedAppointments);
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      setFeedbackMessage("Failed to submit review. Please try again.");
+      setFeedbackType("error");
+    }
+  };
+
   return (
     <div className="container py-4">
       {loading ? (
@@ -150,6 +202,8 @@ export default function AppointmentsPage() {
                 .toISOString()
                 .split("T")[1]
                 .substring(0, 5); // hh:mm
+              const now = new Date();
+              const isPast = utcDate < now;
 
               return (
                 <Card key={appt.A_id} className="mb-3 shadow-sm">
@@ -176,7 +230,7 @@ export default function AppointmentsPage() {
                           )}
                         </small>
                       </Col>
-                      <Col className="col-md-4 col-12 text-md-end">
+                      <Col className="col-md-4 col-12 text-md-end d-flex flex-column gap-2">
                         <Button
                           variant="outline-danger"
                           onClick={() => {
@@ -186,6 +240,20 @@ export default function AppointmentsPage() {
                         >
                           Cancel
                         </Button>
+                        {auth && auth.role === "user" && !appt.R_id && (
+                          <Button
+                            className="outline-button-custom"
+                            disabled={!isPast}
+                            onClick={() => {
+                              setReviewHelperId(appt.Helper?.H_id);
+                              setReviewAppointmentId(appt.A_id);
+                              setShowReviewModal(true);
+                              setReviewAppointmentId(appt.A_id);
+                            }}
+                          >
+                            Add Review
+                          </Button>
+                        )}
                       </Col>
                     </Row>
                     {feedbackMessage && (
@@ -234,6 +302,56 @@ export default function AppointmentsPage() {
             }}
           >
             Confirm Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showReviewModal}
+        onHide={() => setShowReviewModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Add Review</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="mb-3">
+            <label className="form-label">Title</label>
+            <input
+              type="text"
+              className="form-control"
+              value={reviewTitle}
+              onChange={(e) => setReviewTitle(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Description</label>
+            <textarea
+              className="form-control"
+              rows={3}
+              value={reviewDescription}
+              onChange={(e) => setReviewDescription(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Rating (1.0–5.0)</label>
+            <input
+              type="number"
+              className="form-control"
+              value={reviewRating}
+              min={1}
+              max={5}
+              step={0.5}
+              onChange={(e) => setReviewRating(parseFloat(e.target.value))}
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowReviewModal(false)}>
+            Cancel
+          </Button>
+          <Button className="custom-button" onClick={createReview}>
+            Submit Review
           </Button>
         </Modal.Footer>
       </Modal>
