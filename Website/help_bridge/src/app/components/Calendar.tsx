@@ -118,7 +118,7 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
       <div className="calendar-booking p-4 border rounded bg-white shadow-sm">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <Button
-            variant="outline-button-custom"
+            className="outline-button-custom"
             onClick={() => {
               setSelectedDate(null);
               setSelectedTime(null);
@@ -140,7 +140,7 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
             })}
           </h5>
           <Button
-            variant="outline-button-custom"
+            className="outline-button-custom"
             onClick={() => {
               setSelectedDate(null);
               setSelectedTime(null);

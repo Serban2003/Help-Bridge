@@ -310,6 +310,55 @@ export const fetchProfileImageById = async (
 };
 
 // AVAILABILITY
+export const addHelperAvailability = async (
+  helperId: number | string,
+  date: string,
+  hours: string[]
+): Promise<any | null> => {
+  try {
+    const response = await fetch("http://localhost:5000/api/availability", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        H_id: helperId,
+        date: date,
+        hours: hours,
+      }),
+    });
+
+    if (!response.ok) throw new Error("Failed to set availability");
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error setting availability:", error);
+    return null;
+  }
+}
+
+export const deleteHelperAvailability = async (
+  availabilityIds: (number | string)[]
+): Promise<boolean> => {
+  try {
+    const response = await fetch("http://localhost:5000/api/availability", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ids: availabilityIds }),
+    });
+
+    if (!response.ok) throw new Error("Failed to delete availability");
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting availability:", error);
+    return false;
+  }
+};
+
 export const fetchAvailabilityByHelperId = async (
   helperId: number | string
 ): Promise<Availability[] | null> => {
@@ -417,6 +466,7 @@ export const fetchAppointmentsByHelperId = async (
     const response = await fetch(
       `http://localhost:5000/api/appointments?helperId=${helperId}`
     );
+    console.log(response);
     if (!response.ok) throw new Error("Failed to fetch appointments");
 
     const data = await response.json();

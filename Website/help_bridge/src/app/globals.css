@@ -53,6 +53,13 @@ a {
   color: #fff !important;
 }
 
+.toggle-button-custom-booked {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: white !important;
+  cursor: not-allowed !important;
+}
+
 .custom-button {
   background-color: var(--accent-color) !important;
   border-color: var(--accent-color) !important;

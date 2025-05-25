@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {getAllAvailabilities, getAvailabilityByHelperId, createAvailability, updateAvailability} from "../controllers/availabilityController.js"
+import {getAllAvailabilities, getAvailabilityByHelperId, deleteAvailability, createAvailability, updateAvailability} from "../controllers/availabilityController.js"
   
 const router = Router();
 // If id is present in query, use id filter, else return all
@@ -15,5 +15,6 @@ router.get("/", (req, res) => {
 
 router.post("/", createAvailability);
 router.put("/", updateAvailability);
+router.delete("/", deleteAvailability);
 
 export default router;
