@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import "./Calendar.css"; // Assuming you have a CSS file for styles
@@ -35,6 +35,10 @@ export default function HelperAvailabilityCalendar({
   ).getUTCDay();
 
   const hoursList = Array.from({ length: 11 }, (_, i) => i + 8); // 8–18
+
+  useEffect(() => {
+    // When existingAvailability changes, reset selected hours or refresh display if needed
+  }, [existingAvailability]);
 
   const formatDateDDMMYYYY = (date: Date) => {
     const dd = String(date.getUTCDate()).padStart(2, "0");

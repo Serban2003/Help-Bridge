@@ -4,12 +4,12 @@ export class Appointment {
   constructor(A_id, H_id, title, message, date, U_id, R_id, ts_created = null) {
     this.A_id = A_id;
     this.H_id = H_id;
-    this.title = title;
-    this.message = message;
-    this.date = date;
+    this.Title = title;
+    this.Message = message;
+    this.Date = date;
     this.U_id = U_id;
     this.R_id = R_id;
-    this.ts_created = ts_created;
+    this.Ts_created = ts_created;
   }
 }
 
@@ -62,26 +62,27 @@ export const getAppointmentsByHelperId = async (req, res) => {
   try {
     await sql.connect(dbConfig);
     const result = await sql.query(
-      `SELECT * FROM Appointments WHERE H_Id = ${id}`
+      `SELECT a.A_id, a.Date, a.Title, a.Message, u.U_id, u.Firstname, u.Lastname, u.I_id
+      FROM Appointments a
+      JOIN Users u ON a.U_id = u.U_id
+      WHERE a.H_id = ${id}`
     );
-
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "Appointments not found" });
     }
 
-    const appointments = result.recordset.map(
-      (row) =>
-        new Appointment(
-          row.A_id,
-          row.H_id,
-          row.Title,
-          row.Message,
-          row.Date,
-          row.U_id,
-          row.R_id,
-          row.Ts_created
-        )
-    );
+    const appointments = result.recordset.map((row) => ({
+      A_id: row.A_id,
+      Date: row.Date,
+      Title: row.Title,
+      Message: row.Message,
+      User: {
+        U_id: row.U_id,
+        Firstname: row.Firstname,
+        Lastname: row.Lastname,
+        ImageUrl: row.I_id ? `/api/images/${row.I_id}` : null, // adjust if needed
+      },
+    }));
     res.status(200).json(appointments);
   } catch (err) {
     console.error("Error fetching appointments by helper id:", err);
@@ -127,3 +128,32 @@ export const getAppointmentsByUserId = async (req, res) => {
     res.status(500).send("Failed to fetch appointments");
   }
 };
+
+export const deleteAppointment = async (req, res) => {
+  if (!req.query.id) {
+    return res.status(400).json({ message: "Appointment ID is required" });
+  }
+
+  try {
+    await sql.connect(dbConfig);
+
+    // Clear the availability reference
+    await sql.query`
+      UPDATE Availability
+      SET A_id = NULL, IsBooked = 0
+      WHERE A_id = ${req.query.id}
+    `;
+
+    // Delete the appointment
+    await sql.query`
+      DELETE FROM Appointments
+      WHERE A_id = ${req.query.id}
+    `;
+
+    res.status(200).json({ message: "Appointment cancelled successfully" });
+  } catch (err) {
+    console.error("DELETE /appointments error:", err);
+    res.status(500).json({ message: "Failed to cancel appointment" });
+  }
+};
+

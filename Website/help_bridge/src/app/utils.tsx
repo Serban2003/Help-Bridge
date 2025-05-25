@@ -466,16 +466,18 @@ export const fetchAppointmentsByHelperId = async (
     const response = await fetch(
       `http://localhost:5000/api/appointments?helperId=${helperId}`
     );
-    console.log(response);
     if (!response.ok) throw new Error("Failed to fetch appointments");
 
     const data = await response.json();
+    console.log("Fetched appointments:", data);
+   
     return data;
   } catch (error) {
     console.error("Error fetching appointments:", error);
     return null;
   }
 };
+
 // MISC
 export function bufferToDate(buffer: any): Date {
   // Extract the integer from the buffer

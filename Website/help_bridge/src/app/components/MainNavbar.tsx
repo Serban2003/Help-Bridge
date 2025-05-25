@@ -74,7 +74,7 @@ export const MainNavbar = () => {
     };
     fetchCategories();
     fetchImage();
-  }, []);
+  }, [profileImageUrl, auth]);
 
   return (
     <>

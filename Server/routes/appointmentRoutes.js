@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllAppointments, createAppointment, getAppointmentsByHelperId, getAppointmentsByUserId } from "../controllers/appointmentController.js";
+import { getAllAppointments, createAppointment, getAppointmentsByHelperId, getAppointmentsByUserId, deleteAppointment } from "../controllers/appointmentController.js";
   
 const router = Router();
 // If id is present in query, use id filter, else return all
@@ -17,5 +17,6 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", createAppointment);
+router.delete("/", deleteAppointment);
 
 export default router;
