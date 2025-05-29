@@ -206,7 +206,7 @@ export const updateHelperById = async (req, res) => {
     if (req.body.Experience !== undefined) fieldsToUpdate.push(`Experience = ${req.body.Experience}`);
     if (req.body.HC_id !== undefined) fieldsToUpdate.push(`HC_id = ${req.body.HC_id}`);
     if (req.body.C_id !== undefined) fieldsToUpdate.push(`C_id = ${req.body.C_id}`);
-    if (req.body.I_id !== undefined) fieldsToUpdate.push(`I_id = ${I_id ?? "NULL"}`);
+    if (req.body.I_id !== undefined) fieldsToUpdate.push(`I_id = ${req.body.I_id ?? "NULL"}`);
     if (req.body.Password !== undefined) {
       const hashed = await bcrypt.hash(req.body.Password, 10);
       fieldsToUpdate.push(`Password = '${hashed}'`);

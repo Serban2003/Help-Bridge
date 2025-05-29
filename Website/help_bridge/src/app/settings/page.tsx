@@ -183,6 +183,7 @@ export default function SettingsPage() {
             console.error("Failed to update helper");
             return;
           }
+          console.log("Helper updated successfully:", new_helper);
           setHelper(new_helper);
           fetchImage(new_helper.I_id);
         }

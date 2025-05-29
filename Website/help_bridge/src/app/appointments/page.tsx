@@ -175,6 +175,16 @@ export default function AppointmentsPage() {
     }
   };
 
+  const filteredAppointments = (appointments || []).filter((appt: any) => {
+    const utcDate = new Date(appt.Date);
+    const oneHourAfterUtc = new Date(utcDate.getTime() + 60 * 60 * 1000);
+    const now = new Date();
+    if (auth && auth.role === "helper") {
+      return oneHourAfterUtc.getTime() >= now.getTime();
+    }
+    return true;
+  });
+
   return (
     <div className="container py-4">
       {loading ? (
@@ -192,18 +202,21 @@ export default function AppointmentsPage() {
           )}
 
           <h2 className="mt-4">Your Appointments</h2>
-          {!appointments || appointments.length === 0 ? (
+          {!filteredAppointments || filteredAppointments.length === 0 ? (
             <p>No appointments found.</p>
           ) : (
-            appointments.map((appt: any) => {
+            filteredAppointments.map((appt: any) => {
               const utcDate = new Date(appt.Date);
               const dateStr = utcDate.toISOString().split("T")[0];
               const timeStr = utcDate
                 .toISOString()
                 .split("T")[1]
-                .substring(0, 5); // hh:mm
+                .substring(0, 5);
               const now = new Date();
-              const isPast = utcDate < now;
+              const oneHourAfterUtc = new Date(
+                utcDate.getTime() + 60 * 60 * 1000
+              );
+              const isPast = oneHourAfterUtc.getTime() < now.getTime();
 
               return (
                 <Card key={appt.A_id} className="mb-3 shadow-sm">
