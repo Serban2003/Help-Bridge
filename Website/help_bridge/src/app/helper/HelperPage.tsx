@@ -142,7 +142,7 @@ export default function HelperPage() {
         new Appointment(
           0,
           helper.H_id || 0,
-          auth.id,
+          auth.id as number,
           0,
           title,
           message,
