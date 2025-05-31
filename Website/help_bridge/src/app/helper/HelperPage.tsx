@@ -29,6 +29,7 @@ import { Availability } from "../models/Availability";
 import { Appointment } from "../models/Appointment";
 import { Modal, Button } from "react-bootstrap";
 
+// HelperPage component to display helper details, reviews, and booking calendar
 export default function HelperPage() {
   const searchParams = useSearchParams();
   const { auth } = useAuth();
@@ -50,6 +51,7 @@ export default function HelperPage() {
   const [error, setError] = useState<string>("");
   const [averageRating, setAverageRating] = useState<number>(0);
 
+  // Fetch helper details and related data when the component mounts or helperID changes
   useEffect(() => {
     if (!helperID) return;
     const fetchAll = async () => {
@@ -118,6 +120,7 @@ export default function HelperPage() {
     fetchAll();
   }, [helperID]);
 
+  // Function to handle booking a consultation
   const handleBooking = async (
     date: string,
     time: string,
@@ -176,6 +179,7 @@ export default function HelperPage() {
     }
   };
 
+  // If there's an error, display it
   if (error) {
     return (
       <Alert variant="danger" className="text-center my-5">
@@ -184,6 +188,7 @@ export default function HelperPage() {
     );
   }
 
+  // If helper data is not yet loaded, show a loading spinner
   if (!helper) {
     return (
       <div className="text-center py-5">
@@ -193,6 +198,7 @@ export default function HelperPage() {
   }
 
   return (
+    // Render the helper details, reviews, and booking calendar
     <>
       <section className="bg-secondary">
         <div className="container py-5">
