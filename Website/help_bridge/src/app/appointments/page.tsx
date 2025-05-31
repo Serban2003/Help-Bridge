@@ -1,5 +1,6 @@
 "use client";
 
+// Import necessary libraries and components
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/models/AuthContext";
 import Calendar from "@/app/components/Calendar";
@@ -15,6 +16,7 @@ import HelperAvailabilityCalendar from "@/app/components/HelperAvailabilityCalen
 import { Card, Row, Col, Modal, Button } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 export default function AppointmentsPage() {
+  // Initialize authentication context and router
   const { auth } = useAuth();
   const router = useRouter();
   const [availability, setAvailability] = useState<Availability[] | null>([]);
@@ -40,12 +42,15 @@ export default function AppointmentsPage() {
 
   useEffect(() => {
     if (!auth) {
+      // User is not authenticated, redirect to home
       router.push("/");
       return;
     }
 
+    // User is authenticated, proceed to load data
     const loadData = async () => {
       try {
+        // Fetch availability and appointments based on user role
         if (auth.role === "helper") {
           const slots = await fetchAvailabilityByHelperId(auth.id);
           const booked = await fetchAppointmentsByHelperId(auth.id);
@@ -53,12 +58,15 @@ export default function AppointmentsPage() {
           setAvailability(slots);
           setAppointments(booked);
         } else if (auth.role === "user") {
+          // User role, fetch user appointments
           const booked = await fetchAppointmentsByUserId(auth.id);
           setAppointments(booked);
         }
       } catch (err) {
+        // Handle any errors that occur during data fetching
         console.error("Failed to load data:", err);
       } finally {
+        // Set loading to false after data is fetched
         setLoading(false);
       }
     };
@@ -66,34 +74,38 @@ export default function AppointmentsPage() {
     loadData();
   }, [auth]);
 
+  // Function to handle setting availability
   const handleSetAvailability = async (
     date: string,
     toAdd: string[],
     toDelete: number[]
   ) => {
     try {
+      // Check if user is authenticated
       if (!auth) {
         return { success: false, error: "Not authenticated." };
       }
-
+      // Validate date format
       if (toAdd.length > 0) {
         await addHelperAvailability(auth.id, date, toAdd); // POST new slots
       }
-
+      // Validate toDelete array
       if (toDelete.length > 0) {
         await deleteHelperAvailability(toDelete); // DELETE slots by AV_id
       }
-
+      // Fetch updated availability after changes
       const updated = await fetchAvailabilityByHelperId(auth.id);
       setAvailability(updated);
 
       return { success: true };
     } catch (err) {
+      // Handle any errors that occur during availability update
       console.error("Failed to update availability:", err);
       return { success: false, error: "Failed to update availability." };
     }
   };
 
+  // Function to handle cancelling an appointment
   const handleCancelAppointment = async (appointmentId: any) => {
     if (!auth) {
       setFeedbackMessage("You must be logged in to cancel an appointment.");
@@ -101,6 +113,7 @@ export default function AppointmentsPage() {
       return;
     }
 
+    // Validate appointmentId
     try {
       const res = await fetch(
         `http://localhost:5000/api/appointments?id=${appointmentId}`,
@@ -109,10 +122,12 @@ export default function AppointmentsPage() {
         }
       );
 
+      // Check if the response is ok
       if (!res.ok) throw new Error("Failed to cancel appointment");
 
       let updatedAppointments;
 
+      // Fetch updated appointments based on user role
       if (auth.role === "helper") {
         updatedAppointments = await fetchAppointmentsByHelperId(auth.id);
         const updatedAvailability = await fetchAvailabilityByHelperId(auth.id);
@@ -132,6 +147,7 @@ export default function AppointmentsPage() {
     }
   };
 
+  // Function to create a review
   const createReview = async () => {
     if (!auth) return;
     if (!reviewHelperId || !reviewAppointmentId) {
@@ -140,6 +156,7 @@ export default function AppointmentsPage() {
       return;
     }
 
+    // Validate review inputs
     try {
       const res = await fetch("http://localhost:5000/api/reviews", {
         method: "POST",
@@ -154,6 +171,7 @@ export default function AppointmentsPage() {
         }),
       });
 
+      // Check if the response is ok
       if (!res.ok) throw new Error("Failed to submit review");
 
       const result = await res.json();
@@ -175,6 +193,7 @@ export default function AppointmentsPage() {
     }
   };
 
+  // Filter appointments to only show those that are not in the past
   const filteredAppointments = (appointments || []).filter((appt: any) => {
     const utcDate = new Date(appt.Date);
     const oneHourAfterUtc = new Date(utcDate.getTime() + 60 * 60 * 1000);
@@ -186,6 +205,7 @@ export default function AppointmentsPage() {
   });
 
   return (
+    // Main container for the appointments page
     <div className="container py-4">
       {loading ? (
         <p>Loading...</p>
