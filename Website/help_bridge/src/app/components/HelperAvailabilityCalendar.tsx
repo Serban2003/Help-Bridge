@@ -134,6 +134,11 @@ export default function HelperAvailabilityCalendar({
   currentYear < today.getUTCFullYear() ||
   (currentYear === today.getUTCFullYear() && currentMonth <= today.getUTCMonth());
 
+  const maxDate = new Date(Date.UTC(today.getUTCFullYear() + 1, today.getUTCMonth(), 1));
+  const isNextDisabled =
+    currentYear > maxDate.getUTCFullYear() ||
+    (currentYear === maxDate.getUTCFullYear() && currentMonth >= maxDate.getUTCMonth());
+
   return (
     <div className="p-4 border rounded bg-white shadow-sm">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -163,6 +168,7 @@ export default function HelperAvailabilityCalendar({
         </h5>
         <Button
           className="outline-button-custom"
+          disabled={isNextDisabled}
           onClick={() => {
             if (currentMonth === 11) {
               setCurrentYear(currentYear + 1);

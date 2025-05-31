@@ -113,9 +113,15 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
     return calendar;
   };
 
+  // Disable previous month button if current month is the same as today or earlier
   const isPrevDisabled =
   currentYear < today.getUTCFullYear() ||
   (currentYear === today.getUTCFullYear() && currentMonth <= today.getUTCMonth());
+
+  const maxDate = new Date(Date.UTC(today.getUTCFullYear() + 1, today.getUTCMonth(), 1));
+  const isNextDisabled =
+    currentYear > maxDate.getUTCFullYear() ||
+    (currentYear === maxDate.getUTCFullYear() && currentMonth >= maxDate.getUTCMonth());
 
   return (
     <>
@@ -146,6 +152,7 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
           </h5>
           <Button
             className="outline-button-custom"
+            disabled={isNextDisabled}
             onClick={() => {
               setSelectedDate(null);
               setSelectedTime(null);

@@ -138,9 +138,9 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
       hasError = true;
     } else if (!passwordRegex.test(registerPassword)) {
       setRegisterPasswordError([
-        "Password must be at least 8 characters long", 
-        "Password must include upper and lower case letters",
-        "\nPassword must include a number, and a special character."
+        "Password must be at least 8 characters long.", 
+        "Password must include upper and lower case letters.",
+        "Password must include a number, and a special character."
       ].join('\n'));
       hasError = true;
     } else {
