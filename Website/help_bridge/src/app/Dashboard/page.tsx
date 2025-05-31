@@ -1,5 +1,6 @@
 "use client";
 
+// Import necessary libraries and components
 import { useState, useEffect, useRef } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -25,6 +26,7 @@ import { ProfileImage } from "../models/ProfileImage";
 import { User, UserUpdatePayload } from "../models/User";
 import { Helper, HelperUpdatePayload } from "../models/Helper";
 
+// This is the main dashboard page for users and helpers, allowing them to view and edit their profiles, change passwords, and manage account settings.
 export default function DashboardPage() {
   const { auth, loading, profileImageUrl, setProfileImageUrl, logout } =
     useAuth();
@@ -72,6 +74,7 @@ export default function DashboardPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
 
+  // Initialize the dashboard by fetching user or helper data based on authentication status
   useEffect(() => {
     const init = async () => {
       if (!loading && !auth) {
@@ -139,6 +142,7 @@ export default function DashboardPage() {
     init();
   }, [auth, loading]);
 
+  // Fetch the profile image based on the user or helper ID
   const fetchImage = async (id: number | null) => {
     if (!id) return;
     try {
@@ -153,6 +157,7 @@ export default function DashboardPage() {
     }
   };
 
+  // Handle avatar change by uploading a new profile image
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !auth) return;
@@ -195,6 +200,7 @@ export default function DashboardPage() {
     }
   };
 
+  // Handle editing user or helper information
   const handleEdit = async () => {
     if (!auth) return;
     setIsSavingUser(true);
@@ -237,6 +243,7 @@ export default function DashboardPage() {
     }
   };
 
+  // Handle password change for user or helper
   const handleChangePassword = async () => {
     if (!auth) return;
     const id = auth.id;
@@ -273,6 +280,7 @@ export default function DashboardPage() {
     }
   };
 
+  // Handle account deletion for user or helper
   const handleDeleteAccount = async () => {
     if (!auth) return;
 
@@ -308,6 +316,7 @@ export default function DashboardPage() {
   };
 
   return (
+    // Main container for the dashboard page
     <Container className="py-5">
       <div className="d-flex justify-content-end mb-4">
         <Button
