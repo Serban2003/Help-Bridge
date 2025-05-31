@@ -1,5 +1,6 @@
 import {bufferToDate} from "../utils"
 
+// define the Helper model class
 export class Helper {
     private _H_id: number;
     private _HC_id: number;
@@ -113,10 +114,12 @@ export class Helper {
         this._ts_created = value;
     }
 
+    // Method to get the full name of the helper
     getFullName(): string {
         return `${this.Firstname} ${this.Lastname}`;
     }
 
+    // Method to get the formatted experience level
     getFormatedExperience(): string {
         if (this.Experience == 1) {
             return "Intermediate";
@@ -129,11 +132,13 @@ export class Helper {
         }
     }
 
+    // Method to get the formatted creation date
     toString(): string {
         return `Helper ID: ${this._H_id}, Company ID: ${this._C_id}, Name: ${this._firstname} ${this._lastname}, Description: ${this._description}, Experience: ${this.getFormatedExperience()}, Email: ${this._email}, Phone: ${this._phone}, Image ID: ${this._I_id}`;
     }
 }
 
+// Function to transform raw data into a Helper instance
 export const transformToHelper = (data: any): Helper => {
     return new Helper(
       data.H_id,
@@ -151,4 +156,5 @@ export const transformToHelper = (data: any): Helper => {
     );
   };
 
+  // Function to transform raw data into a list of Helper instances
   export type HelperUpdatePayload = Partial<Pick<Helper, "H_id" | "HC_id" | "C_id" | "Firstname" | "Lastname" | "Description" | "Experience" | "Email" | "Phone" | "Password" | "I_id">>;

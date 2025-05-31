@@ -16,6 +16,7 @@ type AuthData = {
   id: string | number;
 };
 
+// Define the context type
 interface AuthContextType {
   auth: AuthData | null;
   login: (data: AuthData) => void;
@@ -28,6 +29,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Create a provider component
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [auth, setAuth] = useState<AuthData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -61,11 +63,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadAuth();
   }, []);
 
+  // Function to log in a user
   const login = (data: AuthData) => {
     localStorage.setItem("user", JSON.stringify(data));
     setAuth(data);
   };
 
+  // Function to log out a user
   const logout = () => {
     // Clear user data from localStorage
     localStorage.removeItem("user");
@@ -83,6 +87,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     login(data);
   };
 
+  // Provide the context value
   return (
     <AuthContext.Provider value={{ auth, login, logout, update, loading, profileImageUrl, setProfileImageUrl }}>
       {children}
@@ -90,6 +95,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// Custom hook to use the AuthContext
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {

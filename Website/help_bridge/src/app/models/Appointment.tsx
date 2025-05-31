@@ -1,5 +1,6 @@
 import { bufferToDate } from "../utils";
 
+// Appointment model class
 export class Appointment {
   private _A_id: number;
   private _H_id: number;
@@ -83,6 +84,7 @@ export class Appointment {
   }
 }
 
+// Function to transform raw data into an Appointment instance
 export function transformToAppointment(data: any): Appointment {
   return new Appointment(
     data.A_id,

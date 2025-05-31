@@ -1,3 +1,4 @@
+// Helper Categories
 export class HelperCategory{
     private _HC_id: number;
     private _name: string;
@@ -33,11 +34,13 @@ export class HelperCategory{
         return this._description;
     }
 
+    // Method to convert the HelperCategory object to a string representation
     toString(): string {
         return `HelperCategory ID: ${this._HC_id}, Name: ${this._name}, Description: ${this._description}`;
     }
 }
 
+// Function to transform raw data into a HelperCategory object
 export function transformToCategory(data: any): HelperCategory {
     return new HelperCategory(
       data.HC_id,

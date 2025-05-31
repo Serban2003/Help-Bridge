@@ -1,3 +1,4 @@
+// Company class with properties and methods for managing company data
 export class Company {
     private _C_id: number;
     private _name: string;

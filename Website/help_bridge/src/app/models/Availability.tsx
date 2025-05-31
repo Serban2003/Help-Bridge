@@ -1,5 +1,6 @@
 import { bufferToDate } from "../utils";
 
+// Appointment model class
 export class Availability {
   private _AV_id: number;
   private _H_id: number;
@@ -53,6 +54,7 @@ export class Availability {
     this._A_id = value;
   }
 
+  // Convert buffer to Time
 getFormattedTime(): string {
   const date = new Date(this._date);
   const hours = String(date.getUTCHours()).padStart(2, "0");
@@ -60,7 +62,7 @@ getFormattedTime(): string {
   return `${hours}:${minutes}`;
 }
 
-
+// Convert buffer to Date
 getFormattedDate(): string {
   const date = new Date(this._date);
   const year = date.getUTCFullYear();
@@ -70,7 +72,7 @@ getFormattedDate(): string {
 }
 
 }
-
+// Function to transform raw data into an Availability instance
 export function transformToAvailability(data: any): Availability {
   return new Availability(
     data.AV_id,

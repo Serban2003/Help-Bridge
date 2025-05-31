@@ -1,5 +1,6 @@
 import {bufferToDate} from "../utils"
 
+// define the Review model class
 export class Review {
   private _R_id: number;
   private _H_id: number;
@@ -69,6 +70,7 @@ export class Review {
   set Ts_created(value: Date) {
     this._ts_created = value;
   }
+  
   // Format the date for displaying in JSX
   getFormattedDate(): string {
     return this._ts_created.toLocaleDateString("en-US", {

@@ -1,5 +1,6 @@
 import { bufferToDate } from "../utils";
 
+// User model class
 export class User {
   private _U_id: number;
   private _firstname: string;
@@ -93,10 +94,12 @@ export class User {
     this._ts_created = value;
   }
 
+  // Method to get the full name of the user
   getFullName(): string {
     return `${this.Firstname} ${this.Lastname}`;
   }
 
+  // Method to get the user's image URL
   toString(): string {
     return `User ID: ${this._U_id}, Name: ${this.getFullName()}, Email: ${
       this._email
@@ -105,6 +108,7 @@ export class User {
     }`;
   }
 
+  // Method to convert the User object to a plain object
   toPlainObject(): Partial<User> {
     return {
       U_id: this.U_id,
@@ -119,6 +123,7 @@ export class User {
   }
 }
 
+// Function to transform raw data into a User object
 export const transformToUser = (data: any): User => {
   return new User(
     data.U_id,
@@ -132,6 +137,7 @@ export const transformToUser = (data: any): User => {
   );
 };
 
+// Type for user update payload
 export type UserUpdatePayload = Partial<
   Pick<
     User,

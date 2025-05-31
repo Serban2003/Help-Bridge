@@ -1,3 +1,4 @@
+// Profile Images
 export class ProfileImage {
   private _I_id: number;
   private _name: string;
@@ -90,6 +91,7 @@ export class ProfileImage {
   }
 }
 
+// Function to transform raw data into a ProfileImage instance
 export function transformToProfileImage(data: any): ProfileImage {
   return new ProfileImage(data.I_id, data.Name, data.Data);
 }
