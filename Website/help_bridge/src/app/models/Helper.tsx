@@ -119,7 +119,7 @@ export class Helper {
 
     getFormatedExperience(): string {
         if (this.Experience == 1) {
-            return "Intermidiate";
+            return "Intermediate";
         }
         else if (this.Experience == 2) {
             return "Professional";

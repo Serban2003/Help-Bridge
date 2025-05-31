@@ -113,12 +113,17 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
     return calendar;
   };
 
+  const isPrevDisabled =
+  currentYear < today.getUTCFullYear() ||
+  (currentYear === today.getUTCFullYear() && currentMonth <= today.getUTCMonth());
+
   return (
     <>
       <div className="calendar-booking p-4 border rounded bg-white shadow-sm">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <Button
             className="outline-button-custom"
+            disabled={isPrevDisabled}
             onClick={() => {
               setSelectedDate(null);
               setSelectedTime(null);

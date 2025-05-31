@@ -130,11 +130,16 @@ export default function HelperAvailabilityCalendar({
     setFeedbackType("success");
   };
 
+  const isPrevDisabled =
+  currentYear < today.getUTCFullYear() ||
+  (currentYear === today.getUTCFullYear() && currentMonth <= today.getUTCMonth());
+
   return (
     <div className="p-4 border rounded bg-white shadow-sm">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <Button
           className="outline-button-custom"
+          disabled={isPrevDisabled}
           onClick={() => {
             if (currentMonth === 0) {
               setCurrentYear(currentYear - 1);
@@ -178,20 +183,25 @@ export default function HelperAvailabilityCalendar({
         ))}
         {Array.from({ length: daysInMonth }, (_, i) => {
           const day = i + 1;
-          const dateStr = formatDateDDMMYYYY(
-            new Date(Date.UTC(currentYear, currentMonth, day))
-          );
+          const dateObj = new Date(Date.UTC(currentYear, currentMonth, day));
+          const dateStr = formatDateDDMMYYYY(dateObj);
+
+          // Calculate if this day is in the past
+          const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+          const isPast = dateObj < todayUTC;
+
           return (
             <div
               key={day}
-              className={`calendar-day rounded ${
-                selectedDate === dateStr ? "selected" : ""
-              }`}
+              className={`calendar-day rounded ${selectedDate === dateStr ? "selected" : ""} ${isPast ? "disabled" : ""}`}
+              style={isPast ? { pointerEvents: "none", opacity: 0.5 } : {}}
               onClick={() => {
-                setSelectedDate(dateStr);
-                prefillHoursForDate(dateStr); // prefill hours for selected date
-                setFeedbackMessage(null); // reset feedback message
-                setFeedbackType(null); // reset feedback type
+                if (!isPast) {
+                  setSelectedDate(dateStr);
+                  prefillHoursForDate(dateStr);
+                  setFeedbackMessage(null);
+                  setFeedbackType(null);
+                }
               }}
             >
               {day}
