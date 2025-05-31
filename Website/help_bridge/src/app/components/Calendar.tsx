@@ -183,7 +183,9 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
                 return (
                   slotDate.toISOString().split("T")[0] === selectedDate && slot.IsBooked == 0
                 );
-              }) || []).map((slot) => (
+              }) || [])
+              .sort((a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime())
+              .map((slot) => (
                 <Button
                   key={slot.AV_id}
                   className={
