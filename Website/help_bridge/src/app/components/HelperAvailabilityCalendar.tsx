@@ -235,8 +235,17 @@ export default function HelperAvailabilityCalendar({
                 return slotDate === selectedISO && slotHour === hourStr;
               });
 
-              const isBooked = slotForHour && slotForHour.IsBooked; // booked = has appointment
+              const isBooked = !!(slotForHour && slotForHour.IsBooked); // booked = has appointment
               const isSelected = selectedHours.includes(hourStr);
+
+              //Disable if today and hour is in the past
+              let isPastHour = false;
+              if (selectedDate) {
+                const [dd, mm, yyyy] = selectedDate.split("-");
+                const selectedDateObj = new Date(+yyyy, +mm - 1, +dd, hour);
+                const nowLocal = new Date();
+                isPastHour = selectedDateObj.getTime() <= nowLocal.getTime();
+              }
 
               let buttonClass = "toggle-button-custom";
               if (isBooked) {
@@ -249,8 +258,15 @@ export default function HelperAvailabilityCalendar({
                 <Button
                   key={hour}
                   className={buttonClass}
-                  title={isBooked ? "This slot is already booked" : ""}
+                  title={
+                    isBooked
+                      ? "This slot is already booked"
+                      : isPastHour
+                        ? "This time has already passed"
+                        : ""
+                  }
                   onClick={() => handleHourToggle(hour)}
+                  disabled={isBooked || isPastHour}
                 >
                   {hourStr}
                 </Button>
