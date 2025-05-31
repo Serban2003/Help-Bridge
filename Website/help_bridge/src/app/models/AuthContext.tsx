@@ -69,6 +69,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     localStorage.removeItem("user");
     setAuth(null);
+
+    // Redirect to home page
+    window.location.href = "/";
   };
 
   const update = (data: AuthData) => {
