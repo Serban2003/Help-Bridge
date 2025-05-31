@@ -25,7 +25,7 @@ import { ProfileImage } from "../models/ProfileImage";
 import { User, UserUpdatePayload } from "../models/User";
 import { Helper, HelperUpdatePayload } from "../models/Helper";
 
-export default function SettingsPage() {
+export default function DashboardPage() {
   const { auth, loading, profileImageUrl, setProfileImageUrl, logout } =
     useAuth();
   const [showUserEdit, setShowUserEdit] = useState(false);
@@ -320,7 +320,7 @@ export default function SettingsPage() {
 
       {auth?.role === "user" && user && (
         <>
-          <h2>User Settings</h2>
+          <h2>User Dashboard</h2>
           <Row className="align-items-center mb-3">
             <Col md={4} className="text-center">
               <img
@@ -387,7 +387,7 @@ export default function SettingsPage() {
 
       {auth?.role === "helper" && helper && (
         <>
-          <h2>Helper Settings</h2>
+          <h2>Helper Dashboard</h2>
           <Row className="align-items-center mb-5">
             <Col md={4} className="text-center">
               <img

@@ -27,7 +27,7 @@ export const MainNavbar = () => {
 
   const handleShow = () => setShowLoginRegisterModal(true);
   const handleClose = () => setShowLoginRegisterModal(false);
-  const goToSettings = () => router.push("/settings");
+  const goToDashboard = () => router.push("/Dashboard");
   const goToAppointments = () => router.push("/appointments");
 
   // Fetch help categories from the server
@@ -145,8 +145,8 @@ export const MainNavbar = () => {
                   align="end"
                   className="link-text-white"
                 >
-                  <NavDropdown.Item onClick={goToSettings}>
-                    Settings
+                  <NavDropdown.Item onClick={goToDashboard}>
+                    Dashboard
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
