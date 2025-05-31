@@ -79,7 +79,13 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
           slot.Date instanceof Date
             ? slot.Date.toISOString().split("T")[0]
             : new Date(slot.Date).toISOString().split("T")[0];
-        return slotDateStr === dateStr && slot.IsBooked == 0;
+        return slotDateStr === dateStr && slot.IsBooked == 0 && 
+        (
+          // If not today, always show
+          slotDateStr !== new Date().toISOString().split("T")[0] ||
+          // If today, only show if slot hour is in the future
+          new Date(slot.Date).getHours() > new Date().getHours()
+        );
       });
 
       const todayUTC = new Date();
@@ -181,7 +187,13 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
                 const slotDate =
                   slot.Date instanceof Date ? slot.Date : new Date(slot.Date);
                 return (
-                  slotDate.toISOString().split("T")[0] === selectedDate && slot.IsBooked == 0
+                  slotDate.toISOString().split("T")[0] === selectedDate && slot.IsBooked == 0 &&
+                  (
+                    // If not today, always show
+                    slotDate.toLocaleDateString("en-CA") !== new Date().toLocaleDateString("en-CA")
+                    // If today, only show if slot hour is in the future
+                    || slotDate.getHours() > new Date().getHours()
+                  )
                 );
               }) || [])
               .sort((a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime())
