@@ -84,10 +84,10 @@ export const MainNavbar = () => {
             <img
               alt="HelpBridge logo"
               src="/images/HelpBridge_logo.png"
-              width="50"
-              height="50"
+              width="62"
+              height="52"
               className="d-inline-block align-top"
-              style={{objectFit: "cover"}}
+              style={{objectFit: "contain"}}
             />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -154,7 +154,7 @@ export const MainNavbar = () => {
               </Nav>
             ) : (
               <Button className="btn-light ms-auto" onClick={handleShow}>
-                Login
+                Login/SignUp
               </Button>
             )}
           </Navbar.Collapse>

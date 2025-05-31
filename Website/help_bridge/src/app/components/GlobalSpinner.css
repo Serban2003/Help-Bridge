@@ -13,7 +13,12 @@
 
 .spinner-container {
   text-align: center;
-  animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 500ms ease-in-out;
+}
+
+.welcome-font {
+  font-family: 'Segoe UI';
+  letter-spacing: 1px; /* Optional: add some spacing */
 }
 
 @keyframes fadeIn {
