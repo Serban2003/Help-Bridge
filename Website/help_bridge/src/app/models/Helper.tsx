@@ -118,23 +118,15 @@ export class Helper {
     }
 
     getFormatedExperience(): string {
-        var years = Math.floor(this.Experience / 12);
-        var months = this.Experience % 12;
-        
-        var yearsStr = years > 1 ? "years" : "year";
-        var monthsStr = months > 1 ? "months" : "month";
-
-        if (years === 0 && months === 0) {
-            return "No experience";
+        if (this.Experience == 1) {
+            return "Intermidiate";
         }
-
-        if (years === 0) {
-            return `${months} ${monthsStr}`;
+        else if (this.Experience == 2) {
+            return "Professional";
+        } 
+        else {
+            return "Expert";
         }
-        if (months === 0) {
-            return `${years} ${yearsStr}`;
-        }
-        return `${years} ${yearsStr} and ${months} ${monthsStr}`;
     }
 
     toString(): string {

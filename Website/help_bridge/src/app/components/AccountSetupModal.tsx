@@ -391,15 +391,18 @@ const AccountSetupModal = ({
 
               <Form.Group className="mb-3" controlId="formExperience">
                 <Form.Label>
-                  <Briefcase size={16} className="me-2" /> Experience (months)
+                  <Briefcase size={16} className="me-2" /> Experience Level
                 </Form.Label>
-                <Form.Control
+                <Form.Select
                   required
-                  type="number"
-                  min={0}
                   value={experience}
                   onChange={(e) => setExperience(e.target.value)}
-                />
+                >
+                  <option value="">Select experience level</option>
+                  <option value="1">Intermediate (2-4 years)</option>
+                  <option value="2">Professional (5-9 years)</option>
+                  <option value="3">Expert (10+ years)</option>
+                </Form.Select>
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="formCompany">
