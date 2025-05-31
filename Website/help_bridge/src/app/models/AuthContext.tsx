@@ -67,14 +67,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
+    // Clear user data from localStorage
     localStorage.removeItem("user");
     setAuth(null);
+
+    // Reset profile image URL to default
+    setProfileImageUrl("/images/default-avatar.jpg");
 
     // Redirect to home page
     window.location.href = "/";
   };
 
   const update = (data: AuthData) => {
+    // Update user data in localStorage
     login(data);
   };
 
