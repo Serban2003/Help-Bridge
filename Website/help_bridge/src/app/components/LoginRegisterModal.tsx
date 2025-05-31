@@ -122,7 +122,7 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
   const handleRegisterClick = async () => {
     let hasError = false;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     if (!registerEmail) {
       setRegisterEmailError("Email is required!");
       hasError = true;
@@ -135,6 +135,13 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
 
     if (!registerPassword) {
       setRegisterPasswordError("Password is required!");
+      hasError = true;
+    } else if (!passwordRegex.test(registerPassword)) {
+      setRegisterPasswordError([
+        "Password must be at least 8 characters long", 
+        "Password must include upper and lower case letters",
+        "\nPassword must include a number, and a special character."
+      ].join('\n'));
       hasError = true;
     } else {
       setRegisterPasswordError("");
@@ -391,7 +398,7 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
                         <Eye size={18} />
                       )}
                     </Button>
-                    <Form.Control.Feedback type="invalid">
+                    <Form.Control.Feedback type="invalid" style={{ whiteSpace: "pre-line" }}>
                       {registerPasswordError}
                     </Form.Control.Feedback>
                   </InputGroup>
