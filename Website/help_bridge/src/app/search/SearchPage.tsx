@@ -13,6 +13,7 @@ import {
   fetchAllHelperCategories,
 } from "../utils";
 
+// SearchPage component to display helpers by category or all categories
 export default function SearchPage() {
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("helperCategoryId");
@@ -26,6 +27,7 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
+  // Fetch all categories and helpers if no categoryId is provided
   useEffect(() => {
     const fetchAllCategoriesAndHelpers = async () => {
       try {
@@ -53,6 +55,7 @@ export default function SearchPage() {
       }
     };
 
+    // If no categoryId is provided
     if (!categoryId) {
       fetchAllCategoriesAndHelpers();
     } else {
@@ -67,6 +70,7 @@ export default function SearchPage() {
         }
       };
 
+      // Fetch category details
       const fetchCategory = async () => {
         try {
           const categoryData = await fetchHelperCategoryById(categoryId);
@@ -84,6 +88,7 @@ export default function SearchPage() {
   }, [categoryId]);
 
   return (
+    // Main container for the search page
     <div className="bg-secondary">
       <div className="container  pt-5 pb-5">
         <div className="d-flex flex-column align-items-center justify-content-center">
