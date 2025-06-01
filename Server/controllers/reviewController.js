@@ -48,11 +48,11 @@ export const createReview = async (req, res) => {
     // Insert review and get inserted ID
     const insertResult = await sql.query`
       INSERT INTO Reviews (H_id, Title, Description, U_id, Rating)
-      OUTPUT INSERTED.R_id
+      OUTPUT INSERTED.R_id, INSERTED.Ts_created
       VALUES (${H_id}, ${Title}, ${Description}, ${U_id}, ${Rating});
     `;
 
-    const newReviewId = insertResult.recordset[0].R_id;
+    const { R_id: newReviewId, Ts_created } = insertResult.recordset[0];
 
     // Update appointment with the new review ID
     await sql.query`
@@ -69,6 +69,7 @@ export const createReview = async (req, res) => {
       U_id,
       Rating,
       A_id,
+      Ts_created,
     });
   } catch (err) {
     console.error("POST /reviews error:", err);

@@ -81,6 +81,20 @@ export class Review {
   }
 }
 
+function parseLocalDate(dateString: string | undefined): Date {
+  if (!dateString || typeof dateString !== "string") {
+    console.warn("Invalid dateString in parseLocalDate:", dateString);
+    return new Date();
+  }
+  const [datePart, timePart] = dateString.split(" ");
+  if (!datePart || !timePart) {
+    return new Date();
+  }
+  const [year, month, day] = datePart.split("-").map(Number);
+  const [hour, minute, second] = timePart.split(":").map(Number);
+  return new Date(year, month - 1, day, hour, minute, second);
+}
+
 export function transformToReview(data: any): Review {
   return new Review(
     data.R_id,
@@ -89,7 +103,7 @@ export function transformToReview(data: any): Review {
     data.Title,
     data.Description,
     data.Rating,
-    bufferToDate(data.Ts_created)
+    data.Ts_created ? parseLocalDate(data.Ts_created) : new Date()
   );
 }
 /**

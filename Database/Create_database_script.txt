@@ -115,7 +115,7 @@ create table dbo.Reviews
             references dbo.Users
             on delete cascade,
     Rating      float        not null,
-    Ts_created  timestamp    not null
+    Ts_created DATETIME NOT NULL DEFAULT GETDATE()
 )
 go
 
