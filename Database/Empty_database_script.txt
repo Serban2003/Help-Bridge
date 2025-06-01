@@ -1,0 +1,25 @@
+USE HelpBridge;
+GO
+
+-- Disable constraint checking
+EXEC sp_MSforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all";
+
+-- Clear all tables in proper order
+DELETE FROM dbo.Availability;
+DELETE FROM dbo.Appointments;
+DELETE FROM dbo.Reviews;
+DELETE FROM dbo.Helpers;
+DELETE FROM dbo.Users;
+DELETE FROM dbo.Companies;
+DELETE FROM dbo.Helper_Categories;
+DELETE FROM dbo.Profile_Images;
+
+-- Reset all identity columns
+EXEC sp_MSforeachtable "IF OBJECTPROPERTY(OBJECT_ID('?'), 'TableHasIdentity') = 1 DBCC CHECKIDENT('?', RESEED, 0)";
+
+-- Re-enable constraint checking
+EXEC sp_MSforeachtable "ALTER TABLE ? CHECK CONSTRAINT all";
+
+-- Confirm clear
+PRINT 'All tables have been emptied and identity columns reset.';
+GO

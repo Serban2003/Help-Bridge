@@ -1,55 +1,339 @@
--- 1. Insert into Helper_Categories
-INSERT INTO Helper_Categories (Name, Description) VALUES
-('Electrician', 'Electrical work and wiring'),
-('Plumber', 'Water and pipe repairs'),
-('Cleaner', 'House and office cleaning'),
-('Gardener', 'Lawn and plant maintenance'),
-('Painter', 'Interior and exterior painting');
+use HelpBridge;
+go
 
--- 2. Insert into Companies
-INSERT INTO Companies (Name, Description, Address) VALUES
-('FixItAll', 'Handyman services for all needs', '123 Main St'),
-('SparkWorks', 'Electrical services', '45 Volt Ave'),
-('AquaCare', 'Professional plumbing company', '78 Water Rd'),
-('CleanHouse Inc.', 'Home and office cleaning services', '99 Sparkle Blvd'),
-('ColorPro', 'Expert painting services', '12 Color Way');
+insert into dbo.Helper_Categories (Name, Description) values
+('Legal Advice', 'Lawyers and legal consultants'),
+('Financial Planning', 'Accountants, financial advisors'),
+('Career Coaching', 'HR professionals, career consultants'),
+('Health & Wellness', 'Nutritionists, therapists, personal trainers'),
+('Home Services', 'Electricians, plumbers, handymen'),
+('Tech Support', 'IT specialists, software developers'),
+('Education & Tutoring', 'Teachers, academic tutors'),
+('Creative Services', 'Designers, photographers, writers');
+go
 
--- 3. Insert into Users
-INSERT INTO Users (Firstname, Lastname, Email, Password, Phone) VALUES
-('Alice', 'Smith', 'alice@example.com', 'pass123', '1234567890'),
-('Bob', 'Brown', 'bob@example.com', 'pass123', '0987654321'),
-('Charlie', 'Davis', 'charlie@example.com', 'pass123', '1112223333'),
-('Diana', 'Evans', 'diana@example.com', 'pass123', '4445556666'),
-('Ethan', 'Frost', 'ethan@example.com', 'pass123', '7778889999');
+insert into dbo.Companies (Name, Description, Address, I_id) values
+-- Legal Advice
+('LexPoint Legal Solutions', 'A law firm specializing in corporate and personal legal advice.', 'Strada Stefan cel Mare 106, Bucharest', null),
+('JuridicExperts', 'Legal consultants specializing in civil and business law.', 'Bulevardul Unirii 22, Cluj-Napoca', null),
 
--- 4. Insert into Helpers
-INSERT INTO Helpers (HC_id, C_id, Firstname, Lastname, Description, Experience, Phone, Email, Password) VALUES
-(1, 1, 'Tom', 'Jones', 'Expert electrician', 120, '1010101010', 'tom@example.com', 'pass123'),
-(2, 2, 'Laura', 'Hill', 'Experienced plumber', 180, '2020202020', 'laura@example.com', 'pass123'),
-(3, 3, 'Mike', 'Snow', 'Fast and efficient cleaner', 60, '3030303030', 'mike@example.com', 'pass123'),
-(4, 4, 'Nina', 'Stone', 'Gardener with a green thumb', 72, '4040404040', 'nina@example.com', 'pass123'),
-(5, 5, 'Oscar', 'Grey', 'Professional painter', 150, '5050505050', 'oscar@example.com', 'pass123');
+-- Financial Planning
+('FutureFinance Advisors', 'A financial consultancy offering investment and tax planning.', 'Strada Mihai Viteazul 15, Timisoara', null),
+('SmartInvest Consulting', 'Personal and corporate financial planning experts.', 'Bulevardul Revolutiei 30, Iasi', null),
 
--- 6. Insert into Reviews
-INSERT INTO Reviews (H_id, Title, Description, U_id, Rating) VALUES
-(1, 'Great Job!', 'Tom fixed all our wiring issues.', 1, 5.0),
-(2, 'Very Reliable', 'Laura repaired a major leak quickly.', 2, 4.8),
-(3, 'Clean & Quick', 'Mike cleaned our house well.', 3, 4.5),
-(4, 'Green Touch', 'Nina revived our garden beautifully.', 4, 5.0),
-(5, 'Vivid Colors', 'Oscar painted our home wonderfully.', 5, 4.9);
+-- Career Coaching
+('CareerBoost Consulting', 'Experts in career development and HR strategy.', 'Strada Alexandru Ioan Cuza 89, Brasov', null),
+('ProPath Coaching', 'Helping professionals advance their careers.', 'Bulevardul Carol I 10, Sibiu', null),
 
--- 7. Insert into Appointments
-INSERT INTO Appointments (H_id, Title, Message, Date, U_id, R_id) VALUES
-(1, 'Wiring Check', 'Need a check on living room lights.', '2025-05-01 10:00:00', 1, 1),
-(2, 'Pipe Fix', 'Urgent bathroom leak.', '2025-05-02 14:00:00', 2, 2),
-(3, 'Weekly Cleaning', 'Please clean all rooms.', '2025-05-03 09:00:00', 3, 3),
-(4, 'Garden Refresh', 'Backyard plants need care.', '2025-05-04 11:00:00', 4, 4),
-(5, 'Paint Living Room', 'We want to repaint the walls.', '2025-05-05 13:00:00', 5, 5);
+-- Health & Wellness
+('VitalWellness Center', 'A wellness clinic with nutritionists and therapists.', 'Strada Independentei 45, Cluj-Napoca', null),
+('HealthFirst Hub', 'A holistic approach to physical and mental wellness.', 'Bulevardul Bucuresti 3, Constanta', null),
 
--- 8. Insert into Availability
-INSERT INTO Availability (H_id, Date, IsBooked, A_id) VALUES
-(1019, '2025-05-11 09:00:00', 0, NULL),
-(1019, '2025-05-11 10:00:00', 0, NULL),
-(1019, '2025-05-12 11:00:00', 0, NULL),
-(1019, '2025-05-12 12:00:00', 0, NULL),
-(1019, '2025-05-13 13:00:00', 0, NULL);
+-- Home Services
+('FixIt Home Services', 'A handyman service for plumbing, electrical, and maintenance needs.', 'Strada Eminescu 66, Oradea', null),
+('CasaReparatii', 'Reliable home maintenance and repair specialists.', 'Bulevardul Avram Iancu 12, Timisoara', null),
+
+-- Tech Support
+('CodeTech Solutions', 'An IT support company specializing in software development.', 'Strada Basarabia 7, Cluj-Napoca', null),
+('SoftFix IT', 'Computer troubleshooting and software optimization.', 'Bulevardul Libertatii 24, Bucharest', null),
+
+-- Education & Tutoring
+('EliteTutors Academy', 'A tutoring center offering academic coaching and skill development.', 'Strada Universitatii 99, Iasi', null),
+('LearnSmart Institute', 'Professional tutoring for students of all ages.', 'Bulevardul Primaverii 5, Brasov', null),
+
+-- Creative Services
+('CreativeVisions Studio', 'A creative agency focused on photography and design.', 'Strada Artistilor 11, Sibiu', null),
+('DesignHub Romania', 'Graphic design and branding specialists.', 'Bulevardul Stefan cel Mare 40, Constanta', null);
+go
+
+insert into dbo.Users (Firstname, Lastname, Email, Password, Phone, I_id) values
+-- Male Users
+('Victor', 'Dragomir', 'v.dragomir85@netmail.com', 'SunsetFalcon47!', '0721123456', null),
+('Sebastian', 'Lupu', 'sebastian.wolf@gmail.com', 'QuantumC0de99$', '0722234567', null),
+('Florin', 'Ciobanu', 'florinc99@yahoo.ro', 'HorizonTiger_34', '0723345678', null),
+('Darius', 'Neagu', 'darius.neo@outlook.ro', 'EchoStorm56*', '0724456789', null),
+('Rares', 'Stan', 'rares.stan@quickmail.com', 'SecretPass!92', '0725567890', null),
+('Emanuel', 'Radu', 'radu.manuel@cybernet.ro', 'FirePhoenix_12', '0726678901', null),
+('Tudor', 'Zamfir', 'tudor.z@fastnet.ro', 'LightningFox!87', '0727789012', null),
+('George', 'Muresan', 'gmuresan07@techwave.com', 'RandomSky23$', '0728890123', null),
+('Eduard', 'Moise', 'edu_m@gmail.com', 'WarpTornado99!', '0729901234', null),
+('Silviu', 'Dobre', 'silviu.dobre@fastconnect.ro', 'QuantumShadow17*', '0730012345', null),
+
+-- Female Users
+('Sorina', 'Manole', 'sorina.m@webhub.ro', 'WildRose77!', '0731123456', null),
+('Iulia', 'Vlad', 'iulivlad@techmail.com', 'CyberKnight202$', '0732234567', null),
+('Andreea', 'Marcu', 'andy.marcu@yahoo.ro', 'GoldenWave!48', '0733345678', null),
+('Teodora', 'Cristea', 'cristea.teo@swiftmail.ro', 'MidnightEcho*24', '0734456789', null),
+('Raluca', 'Nastase', 'raluca.n@fastweb.ro', 'DragonKey_56$', '0735567890', null),
+('Oana', 'Preda', 'oana.p@secureconnect.com', 'ShadowFlame87!', '0736678901', null),
+('Carmen', 'Stoian', 'stoian.carmen@cyberwave.com', 'TwilightSpear32$', '0737789012', null),
+('Mirela', 'Iacob', 'mirela.i@netflow.ro', 'SolarRift_99!', '0738890123', null),
+('Natalia', 'Simion', 'natalia.sim@fastmail.ro', 'ZephyrStorm42*', '0739901234', null),
+('Beatrice', 'Tudose', 'beatrice.tudose@weblight.com', 'RandomQuest75$', '0740012345', null);
+go
+
+insert into dbo.Helpers (HC_id, C_id, Firstname, Lastname, Description, Experience, Phone, Email, Password, I_id) values
+-- Legal Advice Helpers (HC_id = 1)
+(1, 1, 'Adrian', 'Vasilescu', 'Experienced corporate lawyer specializing in business contracts.', 1, '0721456789', 'adrian.vasilescu@lexpoint.ro', 'LegalEagle87!', null),
+(1, 2, 'Sebastian', 'Neagu', 'Legal expert with a strong background in property law.', 3, '0729456789', 'sebastian.neagu@juridicexperts.ro', 'CourtDefender_98!', null),
+(1, 1, 'Laura', 'Mihailescu', 'Criminal lawyer with experience in litigation and defense.', 2, '0737234567', 'laura.mihailescu@lexpoint.ro', 'LawDefender_67$', null),
+
+-- Financial Planning Helpers (HC_id = 2)
+(2, 3, 'Bogdan', 'Manole', 'Financial consultant helping clients with investments and retirement planning.', 2, '0722789456', 'bogdan.manole@futurefinance.ro', 'SmartMoney42$', null),
+(2, 4, 'Daniel', 'Ionescu', 'Finance coach advising on tax strategies and savings plans.', 1, '0730567890', 'daniel.ionescu@smartinvest.ro', 'MoneyWizard42$', null),
+(2, 3, 'Diana', 'Voicu', 'Personal finance consultant specializing in budgeting and investment growth.', 3, '0738345678', 'diana.voicu@futurefinance.ro', 'SaveSmart_89!', null),
+
+-- Career Coaching Helpers (HC_id = 3)
+(3, 5, 'Mihai', 'Petrescu', 'Career coach providing CV reviews and interview prep.', 3, '0723891234', 'mihai.petrescu@careerboost.ro', 'ProPathSuccess99', null),
+(3, 6, 'Sorina', 'Stanescu', 'Interview prep specialist helping professionals land their dream jobs.', 1, '0739456789', 'sorina.stanescu@careerpath.ro', 'SuccessPath_90!', null),
+(3, 5, 'Cristina', 'Radulescu', 'Career strategist focused on leadership development.', 3, '0731678901', 'cristina.radulescu@careerboost.ro', 'FutureSkills_77!', null),
+
+-- Health & Wellness Helpers (HC_id = 4)
+(4, 7, 'Vlad', 'Dumitru', 'Certified nutritionist focused on personalized diet plans.', 1, '0724987654', 'vlad.dumitru@vitalwellness.ro', 'HealthFocus_77!', null),
+(4, 8, 'Elena', 'Cristea', 'Certified wellness coach providing stress management strategies.', 2, '0740567890', 'elena.cristea@healthfirst.ro', 'HealthyLiving_77!', null),
+(4, 7, 'Ioana', 'Serban', 'Holistic health coach integrating fitness and mindfulness techniques.', 1, '0732789012', 'ioana.serban@vitalwellness.ro', 'WellnessWay_88!', null),
+
+-- Home Services Helpers (HC_id = 5)
+(5, 9, 'Rares', 'Enache', 'Reliable handyman with expertise in plumbing and electrical repairs.', 2, '0725012345', 'rares.enache@fixit.ro', 'HouseFix34$', null),
+(5, 10, 'Alina', 'Popa', 'Professional handyman skilled in home renovation and furniture assembly.', 2, '0733890123', 'alina.popa@casareparatii.ro', 'FixItExpert_44$', null),
+
+-- Tech Support Helpers (HC_id = 6)
+(6, 11, 'George', 'Stan', 'IT specialist offering software development and debugging services.', 3, '0726123456', 'george.stan@codetech.ro', 'CodeMaster77!', null),
+(6, 12, 'Gabriela', 'Nistor', 'Cybersecurity analyst offering IT troubleshooting and security solutions.', 3, '0734901234', 'gabriela.nistor@softfix.ro', 'ShieldGuard_99!', null),
+
+-- Education & Tutoring Helpers (HC_id = 7)
+(7, 13, 'Florin', 'Constantin', 'Experienced math tutor with a passion for helping students excel.', 1, '0727234567', 'florin.constantin@elitetutors.ro', 'TutorAce_56$', null),
+(7, 14, 'Monica', 'Stoica', 'Language tutor specializing in English and French lessons.', 1, '0735012345', 'monica.stoica@learnsmart.ro', 'LinguistPro_24$', null),
+
+-- Creative Services Helpers (HC_id = 8)
+(8, 15, 'Eduard', 'Munteanu', 'Photographer specializing in portrait and event photography.', 2, '0728345678', 'eduard.munteanu@creativevisions.ro', 'VisionLens24*', null),
+(8, 16, 'Beatrice', 'Tudor', 'Graphic designer focused on brand identity and digital illustrations.', 2, '0736123456', 'beatrice.tudor@designhub.ro', 'CreativeVision_58!', null);
+
+
+insert into dbo.Reviews (H_id, Title, Description, U_id, Rating, Ts_created) values
+-- Review for appointment on 2025-05-08 10:00:00 (H_id = 8, Experience 2)
+(8, 'Excellent Photography Session', 'Eduard captured exactly what I was looking for in my professional headshots. Very skilled!', 3, 4.7, '2025-05-08 11:23:14.421'),
+
+-- Review for appointment on 2025-05-09 09:00:00 (H_id = 4, Experience 1)
+(4, 'Helpful Nutrition Advice', 'Vlad provided some good insights, although I would have appreciated more detailed meal plans. Overall satisfied.', 5, 3.9, '2025-05-09 10:45:32.118'),
+
+-- Review for appointment on 2025-05-10 10:00:00 (H_id = 1, Experience 1)
+(1, 'Competent Legal Review', 'Adrian thoroughly examined my rental agreement and identified several issues I would have missed. Good service despite being newer in the field.', 2, 4.2, '2025-05-10 14:07:19.753'),
+
+-- Review for appointment on 2025-05-11 11:00:00 (H_id = 3, Experience 3)
+(3, 'Outstanding Career Advice', 'Mihai''s extensive experience really shows. He provided exceptional guidance for my career transition with concrete steps and industry insights.', 9, 5.0, '2025-05-11 13:12:45.390'),
+
+-- Review for appointment on 2025-05-12 14:00:00 (H_id = 2, Experience 2)
+(2, 'Solid Financial Planning', 'Bogdan offered a well-structured retirement plan with several investment options. Very professional approach.', 7, 4.5, '2025-05-12 16:33:27.642'),
+
+-- Review for appointment on 2025-05-14 14:00:00 (H_id = 3, Experience 3)
+(3, 'Excellent Resume Assistance', 'Mihai transformed my CV completely. His experience in talent acquisition really improved my chances of getting interviews.', 4, 4.8, '2025-05-14 17:09:51.276'),
+
+-- Review for appointment on 2025-05-14 08:00:00 (H_id = 11, Experience 2)
+(11, 'Great Interview Prep', 'Laura asked challenging questions and provided useful feedback. The mock interview was very realistic.', 10, 4.4, '2025-05-14 10:17:06.819'),
+
+-- Review for appointment on 2025-05-14 12:00:00 (H_id = 11, Experience 2)
+(11, 'Helpful Career Transition Advice', 'Laura provided good insights about switching industries, though I wished for more specific tactics.', 13, 3.8, '2025-05-14 15:23:41.502'),
+
+-- Review for appointment on 2025-05-15 11:00:00 (H_id = 12, Experience 3)
+(12, 'Comprehensive Health Assessment', 'Diana is extremely knowledgeable. She created a personalized wellness plan addressing all my concerns. Highly experienced professional!', 8, 4.9, '2025-05-15 13:41:12.367'),
+
+-- Review for appointment on 2025-05-16 11:00:00 (H_id = 7, Experience 1)
+(7, 'Decent Math Tutoring', 'Florin explained calculus concepts well, but sometimes seemed uncertain with more complex problems. Still helpful overall.', 15, 3.7, '2025-05-16 13:05:48.925'),
+
+-- Review for appointment on 2025-05-16 14:00:00 (H_id = 13, Experience 1)
+(13, 'Good Business Photos', 'Sorina took nice portfolio pictures, though the session felt a bit rushed. The results are satisfactory.', 12, 3.5, '2025-05-16 16:22:37.190'),
+
+-- Review for appointment on 2025-05-18 13:00:00 (H_id = 15, Experience 3)
+(15, 'Fantastic Logo Design', 'Cristina is incredibly talented! She captured my brand perfectly and provided multiple excellent options. Worth every penny!', 14, 5.0, '2025-05-18 15:48:19.723'),
+
+-- Review for appointment on 2025-05-18 09:00:00 (H_id = 6, Experience 3)
+(6, 'Effective Website Debugging', 'George resolved all the issues with my online store quickly. His expertise was evident in how he approached the problems.', 16, 4.7, '2025-05-18 11:37:52.481'),
+
+-- Review for appointment on 2025-05-19 10:00:00 (H_id = 2, Experience 2)
+(2, 'Informative Investment Session', 'Bogdan provided good advice for starting investments, though I needed to ask many follow-up questions to fully understand.', 11, 4.0, '2025-05-19 12:19:03.247'),
+
+-- Review for appointment on 2025-05-20 12:00:00 (H_id = 4, Experience 1)
+(4, 'Mixed Diet Planning Experience', 'Vlad had some good ideas but the meal plan wasn''t very practical for my lifestyle. Needs more customization.', 18, 3.4, '2025-05-20 14:56:25.639');
+go
+
+insert into dbo.Appointments (H_id, Title, Message, Date, U_id, R_id) values
+-- MAY 2025 (Past appointments - some with reviews, some without)
+(8, 'Photography Session', 'Looking for professional headshots', '2025-05-08 10:00:00', 3, 1),
+(4, 'Nutrition Consultation', 'Need help with meal planning', '2025-05-09 09:00:00', 5, 2),
+(1, 'Contract Review', 'Need assistance with rental agreement', '2025-05-10 10:00:00', 2, 3),
+(3, 'Career Development', 'Seeking advice on job transition', '2025-05-11 11:00:00', 9, 4),
+(2, 'Financial Planning', 'Help with retirement strategy', '2025-05-12 14:00:00', 7, 5),
+(3, 'Resume Review', 'Need feedback on my CV', '2025-05-14 14:00:00', 4, 6),
+(11, 'Interview Preparation', 'Practice for upcoming job interview', '2025-05-14 08:00:00', 10, 7),
+(11, 'Career Change Advice', 'Considering switching industries', '2025-05-14 12:00:00', 13, 8),
+(1, 'Legal Consultation', 'Question about business contracts', '2025-05-15 11:00:00', 6, null), -- No review
+(12, 'Health Assessment', 'First wellness consultation', '2025-05-15 11:00:00', 8, 9),
+(7, 'Math Tutoring', 'Help with calculus problems', '2025-05-16 11:00:00', 15, 10),
+(13, 'Business Photoshoot', 'Need professional portfolio pictures', '2025-05-16 14:00:00', 12, 11),
+(14, 'Software Problem', 'Computer running slow, need technical support', '2025-05-17 09:30:00', 17, null), -- No review
+(15, 'Logo Design', 'Need branding help for my small business', '2025-05-18 13:00:00', 14, 12),
+(6, 'Website Debugging', 'Fix issues with my online store', '2025-05-18 09:00:00', 16, 13),
+(2, 'Investment Consultation', 'Want to start investing wisely', '2025-05-19 10:00:00', 11, 14),
+(16, 'French Tutoring', 'Need help with language basics', '2025-05-19 15:30:00', 19, null), -- No review
+(4, 'Diet Planning', 'Seeking healthier eating habits', '2025-05-20 12:00:00', 18, 15),
+(6, 'Software Installation', 'Need help setting up new program', '2025-05-22 14:00:00', 20, null), -- No review
+
+-- JUNE 2025 (Future appointments - all with null R_id)
+(9, 'Lease Agreement Review', 'Need help with rental contract', '2025-06-02 10:00:00', 1, null),
+(9, 'Business Contract Review', 'Partnership agreement needs legal check', '2025-06-02 15:00:00', 5, null),
+(1, 'Legal Advice Session', 'Questions about intellectual property', '2025-06-02 11:00:00', 3, null),
+(4, 'Fitness Consultation', 'Help creating a workout plan', '2025-06-02 12:00:00', 7, null),
+(9, 'Will Preparation', 'Need to update my estate planning', '2025-06-03 13:00:00', 9, null),
+(2, 'Debt Reduction Plan', 'Help managing and reducing my debts', '2025-06-03 14:00:00', 11, null),
+(9, 'Divorce Consultation', 'Need legal advice on separation', '2025-06-04 16:00:00', 13, null),
+(10, 'Tax Planning', 'Strategies to reduce my tax burden', '2025-06-05 14:00:00', 15, null),
+(10, 'Investment Review', 'Evaluation of my current portfolio', '2025-06-06 16:00:00', 17, null),
+(1, 'Copyright Issue', 'Questions about content ownership', '2025-06-06 13:00:00', 19, null),
+(10, 'Retirement Planning', 'Long-term financial security planning', '2025-06-07 08:00:00', 2, null),
+(7, 'Science Tutoring', 'Help with physics homework', '2025-06-07 09:00:00', 4, null),
+(8, 'Wedding Photography', 'Discussing package options for my event', '2025-06-07 13:00:00', 6, null),
+(10, 'College Fund Planning', 'Setting up savings for my children', '2025-06-08 09:00:00', 8, null),
+(3, 'Leadership Development', 'Improving management skills', '2025-06-08 14:00:00', 10, null),
+(11, 'Job Search Strategy', 'Help finding positions in my field', '2025-06-09 10:00:00', 12, null),
+(11, 'LinkedIn Profile Review', 'Improve my professional online presence', '2025-06-10 11:00:00', 14, null),
+(11, 'Salary Negotiation', 'Advice for upcoming performance review', '2025-06-10 16:00:00', 16, null),
+(6, 'Computer Troubleshooting', 'Fix recurring system crashes', '2025-06-10 16:00:00', 18, null),
+(11, 'Resume Redesign', 'Complete overhaul of my CV', '2025-06-11 14:00:00', 20, null),
+(11, 'Interview Coaching', 'Practice for executive position', '2025-06-12 10:00:00', 1, null),
+(4, 'Nutrition Plan', 'Help with special dietary needs', '2025-06-12 17:00:00', 3, null),
+(12, 'Mental Health Check-in', 'Regular wellness session', '2025-06-13 09:00:00', 5, null),
+(12, 'Weight Management', 'Creating sustainable health habits', '2025-06-14 08:00:00', 7, null),
+(12, 'Stress Management', 'Techniques for work-life balance', '2025-06-15 10:00:00', 9, null),
+(12, 'Sleep Improvement', 'Help with insomnia issues', '2025-06-15 16:00:00', 11, null),
+(12, 'Mindfulness Training', 'Learning meditation techniques', '2025-06-16 13:00:00', 13, null),
+(13, 'Product Photography', 'Pictures for my online store', '2025-06-17 08:00:00', 15, null),
+(13, 'Family Portrait Session', 'Professional family photos', '2025-06-18 09:00:00', 17, null),
+(13, 'Real Estate Photography', 'Pictures of property for sale', '2025-06-18 16:00:00', 19, null),
+(14, 'Data Recovery', 'Help retrieving lost files', '2025-06-18 09:30:00', 2, null),
+(13, 'Social Media Content', 'Photos for marketing campaign', '2025-06-19 10:00:00', 4, null),
+(15, 'Website Design Consultation', 'Need a new business website', '2025-06-19 10:00:00', 6, null),
+(13, 'Event Photography Planning', 'Discussing wedding photography needs', '2025-06-20 08:00:00', 8, null),
+(13, 'Headshot Session', 'Professional photos for LinkedIn', '2025-06-20 12:00:00', 10, null),
+(16, 'English Grammar Tutoring', 'Help with academic writing', '2025-06-20 08:00:00', 12, null),
+(14, 'Virus Removal', 'Computer infected with malware', '2025-06-21 09:00:00', 14, null),
+(14, 'Network Setup', 'Configure home office network', '2025-06-22 10:00:00', 16, null),
+(14, 'Device Sync Issues', 'Problem with cloud synchronization', '2025-06-22 16:00:00', 18, null),
+(14, 'Software Training', 'Learn to use design software', '2025-06-23 14:00:00', 20, null),
+(14, 'Printer Configuration', 'Setting up wireless printing', '2025-06-24 10:00:00', 1, null),
+(15, 'Marketing Materials', 'Create flyers and business cards', '2025-06-25 09:00:00', 3, null),
+(15, 'Brochure Design', 'Digital and print marketing materials', '2025-06-26 08:00:00', 5, null),
+(15, 'Social Media Graphics', 'Content for Instagram campaign', '2025-06-27 10:00:00', 7, null),
+(15, 'Presentation Design', 'Slides for important meeting', '2025-06-27 16:00:00', 9, null),
+(15, 'Business Card Design', 'Professional cards for new company', '2025-06-28 13:00:00', 11, null);
+go
+
+insert into dbo.Availability (H_id, Date, IsBooked, A_id) values
+
+(8, '2025-05-08 10:00:00', 1, 1),
+(4, '2025-05-09 09:00:00', 1, 2),
+(1, '2025-05-10 10:00:00', 1, 3),
+(1, '2025-05-10 11:00:00', 0, null),
+(1, '2025-05-10 12:00:00', 0, null),
+(1, '2025-05-10 13:00:00', 0, null),
+(3, '2025-05-11 11:00:00', 1, 4),
+(2, '2025-05-12 14:00:00', 1, 5),
+(5, '2025-05-13 10:00:00', 0, null),
+(3, '2025-05-14 14:00:00', 1, 6),
+(11, '2025-05-14 08:00:00', 1, 7),
+(11, '2025-05-14 12:00:00', 1, 8),
+(1, '2025-05-15 11:00:00', 1, 9),
+(12, '2025-05-15 11:00:00', 1, 10),
+(7, '2025-05-16 11:00:00', 1, 11),
+(13, '2025-05-16 14:00:00', 1, 12),
+(14, '2025-05-17 09:30:00', 1, 13),
+(15, '2025-05-18 13:00:00', 1, 14),
+(6, '2025-05-18 09:00:00', 1, 15),
+(2, '2025-05-19 10:00:00', 1, 16),
+(16, '2025-05-19 15:30:00', 1, 17),
+(4, '2025-05-20 12:00:00', 1, 18),
+(6, '2025-05-22 14:00:00', 1, 19),
+(9, '2025-06-01 09:00:00', 0, null),
+(9, '2025-06-01 14:00:00', 0, null),
+(9, '2025-06-02 10:00:00', 1, 20),
+(9, '2025-06-02 15:00:00', 1, 21),
+(1, '2025-06-02 11:00:00', 1, 22),
+(4, '2025-06-02 12:00:00', 1, 23),
+(9, '2025-06-03 09:00:00', 0, null),
+(9, '2025-06-03 13:00:00', 1, 24),
+(2, '2025-06-03 14:00:00', 1, 25),
+(1, '2025-06-04 10:00:00', 0, null),
+(5, '2025-06-04 10:00:00', 0, null),
+(8, '2025-06-04 10:00:00', 0, null),
+(9, '2025-06-04 11:00:00', 0, null),
+(9, '2025-06-04 16:00:00', 1, 26),
+(3, '2025-06-05 11:00:00', 0, null),
+(10, '2025-06-05 09:00:00', 0, null),
+(10, '2025-06-05 14:00:00', 1, 27),
+(10, '2025-06-06 10:00:00', 0, null),
+(10, '2025-06-06 16:00:00', 1, 28),
+(1, '2025-06-06 13:00:00', 1, 29),
+(4, '2025-06-06 14:00:00', 0, null),
+(10, '2025-06-07 08:00:00', 1, 30),
+(10, '2025-06-07 12:00:00', 0, null),
+(2, '2025-06-07 10:00:00', 0, null),
+(6, '2025-06-07 14:00:00', 0, null),
+(7, '2025-06-07 09:00:00', 1, 31),
+(8, '2025-06-07 13:00:00', 1, 32),
+(10, '2025-06-08 09:00:00', 1, 33),
+(10, '2025-06-08 15:00:00', 0, null),
+(3, '2025-06-08 14:00:00', 1, 34),
+(5, '2025-06-08 12:00:00', 0, null),
+(11, '2025-06-09 10:00:00', 1, 35),
+(11, '2025-06-09 13:00:00', 0, null),
+(1, '2025-06-09 14:30:00', 0, null),
+(11, '2025-06-10 11:00:00', 1, 36),
+(11, '2025-06-10 16:00:00', 1, 37),
+(6, '2025-06-10 16:00:00', 1, 38),
+(11, '2025-06-11 09:00:00', 0, null),
+(11, '2025-06-11 14:00:00', 1, 39),
+(7, '2025-06-11 12:00:00', 0, null),
+(11, '2025-06-12 10:00:00', 1, 40),
+(11, '2025-06-12 17:00:00', 0, null),
+(4, '2025-06-12 17:00:00', 1, 41),
+(3, '2025-06-13 16:00:00', 0, null),
+(12, '2025-06-13 09:00:00', 1, 42),
+(12, '2025-06-13 15:00:00', 0, null),
+(12, '2025-06-14 08:00:00', 1, 43),
+(12, '2025-06-14 12:00:00', 0, null),
+(12, '2025-06-15 10:00:00', 1, 44),
+(12, '2025-06-15 16:00:00', 1, 45),
+(12, '2025-06-16 09:00:00', 0, null),
+(12, '2025-06-16 13:00:00', 1, 46),
+(13, '2025-06-17 08:00:00', 1, 47),
+(13, '2025-06-17 14:00:00', 0, null),
+(13, '2025-06-18 09:00:00', 1, 48),
+(13, '2025-06-18 16:00:00', 1, 49),
+(14, '2025-06-18 09:30:00', 1, 50),
+(13, '2025-06-19 10:00:00', 1, 51),
+(13, '2025-06-19 17:00:00', 0, null),
+(15, '2025-06-19 10:00:00', 1, 52),
+(13, '2025-06-20 08:00:00', 1, 53),
+(13, '2025-06-20 12:00:00', 1, 54),
+(16, '2025-06-20 08:00:00', 1, 55),
+(14, '2025-06-21 09:00:00', 1, 56),
+(14, '2025-06-21 13:00:00', 0, null),
+(14, '2025-06-22 10:00:00', 1, 57),
+(14, '2025-06-22 16:00:00', 1, 58),
+(14, '2025-06-23 09:00:00', 0, null),
+(14, '2025-06-23 14:00:00', 1, 59),
+(14, '2025-06-24 10:00:00', 1, 60),
+(14, '2025-06-24 17:00:00', 0, null),
+(15, '2025-06-25 09:00:00', 1, 61),
+(15, '2025-06-25 15:00:00', 0, null),
+(15, '2025-06-26 08:00:00', 1, 62),
+(15, '2025-06-26 12:00:00', 0, null),
+(15, '2025-06-27 10:00:00', 1, 63),
+(15, '2025-06-27 16:00:00', 1, 64),
+(15, '2025-06-28 09:00:00', 0, null),
+(15, '2025-06-28 13:00:00', 1, 65),
+(16, '2025-06-29 08:00:00', 0, null),
+(16, '2025-06-29 14:00:00', 0, null),
+(16, '2025-06-30 09:00:00', 0, null),
+(16, '2025-06-30 16:00:00', 0, null);
+go
