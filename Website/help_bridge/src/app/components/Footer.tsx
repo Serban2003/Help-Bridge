@@ -44,8 +44,8 @@ const Footer = () => {
                     </a>
                   </li>
                   <li>
-                    <a href="/settings" className="link-text-white">
-                      Settings
+                    <a href="/Dashboard" className="link-text-white">
+                      Dashboard
                     </a>
                   </li>
                 </>

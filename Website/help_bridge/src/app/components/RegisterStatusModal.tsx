@@ -18,7 +18,7 @@ const RegisterStatusModal = ({
 
   // Function to handle the close action and navigate to the dashboard
   const goToDashboard = () => {
-    router.push("/settings"); 
+    router.push("/Dashboard"); // Navigate to the dashboard
     handleClose();
   };
 

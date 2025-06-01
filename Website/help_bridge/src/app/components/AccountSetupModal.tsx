@@ -136,6 +136,14 @@ const AccountSetupModal = ({
           selectedCompany === "other" ? 0 : parseInt(selectedCompany);
 
         if (selectedCompany === "other") {
+          // Check for duplicate company name (case-insensitive, trimmed)
+          const duplicate = companies.some(
+            (c) => c.Name.trim().toLowerCase() === customCompanyName.trim().toLowerCase()
+          );
+          if (duplicate) {
+            setErrorMessage("A company with this name already exists. Please select it from the list or choose a different name.");
+            return;
+          }
           if (companyLogo) {
             const imageFormData = new FormData();
             imageFormData.append("image", companyLogo);
