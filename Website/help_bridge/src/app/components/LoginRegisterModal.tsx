@@ -457,10 +457,10 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
                 </Button>
 
                 {registerEmailError && (
-  <p className="text-danger text-center mt-2 mb-0 pb-0">
-    {registerEmailError}
-  </p>
-)}
+                  <p className="text-danger text-center mt-2 mb-0 pb-0">
+                    {registerEmailError}
+                  </p>
+                )}
               </Form>
             </Tab>
           </Tabs>
