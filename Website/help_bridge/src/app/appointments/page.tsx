@@ -207,6 +207,11 @@ export default function AppointmentsPage() {
   return (
     // Main container for the appointments page
     <div className="container py-4">
+      {feedbackMessage && (
+        <div className={`alert ${feedbackType === "success" ? "alert-success" : "alert-danger"} mt-2`}>
+          {feedbackMessage}
+        </div>
+      )}
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -264,15 +269,17 @@ export default function AppointmentsPage() {
                         </small>
                       </Col>
                       <Col className="col-md-4 col-12 text-md-end d-flex flex-column gap-2">
-                        <Button
-                          variant="outline-danger"
-                          onClick={() => {
-                            setSelectedAppointmentId(appt.A_id);
-                            setShowConfirmModal(true);
-                          }}
-                        >
-                          Cancel
-                        </Button>
+                        {!isPast && (
+                          <Button
+                            variant="outline-danger"
+                            onClick={() => {
+                              setSelectedAppointmentId(appt.A_id);
+                              setShowConfirmModal(true);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        )}
                         {auth && auth.role === "user" && !appt.R_id && (
                           <Button
                             className="outline-button-custom"
@@ -289,17 +296,6 @@ export default function AppointmentsPage() {
                         )}
                       </Col>
                     </Row>
-                    {feedbackMessage && (
-                      <p
-                        className={` ${
-                          feedbackType === "success"
-                            ? "text-success"
-                            : "text-danger"
-                        } mt-3 mb-0`}
-                      >
-                        {feedbackMessage}
-                      </p>
-                    )}
                   </Card.Body>
                 </Card>
               );

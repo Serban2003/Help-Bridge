@@ -102,9 +102,10 @@ export const getAppointmentsByUserId = async (req, res) => {
   try {
     await sql.connect(dbConfig);
     const result = await sql.query(
-       `SELECT a.A_id, a.Date, a.Title, a.Message, h.H_id, h.Firstname, h.Lastname, h.I_id
+       `SELECT a.A_id, a.Date, a.Title, a.Message, h.H_id, h.Firstname, h.Lastname, h.I_id, a.R_id
       FROM Appointments a
       JOIN Helpers h ON h.H_id = a.H_id
+      LEFT JOIN Reviews r ON a.R_id = r.R_id
       WHERE a.U_id = ${id}`
     );
 
@@ -117,6 +118,7 @@ export const getAppointmentsByUserId = async (req, res) => {
       Date: row.Date,
       Title: row.Title,
       Message: row.Message,
+      R_id: row.R_id,
       Helper: {
         H_id: row.H_id,
         Firstname: row.Firstname,
