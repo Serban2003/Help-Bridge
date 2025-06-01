@@ -100,11 +100,11 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
         setLoginSuccessMessage("");
         return;
       }
-    
+
       login(result);
       setLoginErrorMessage("");
       setLoginSuccessMessage("Login successful!");
-    
+
       setTimeout(() => {
         setLoginSuccessMessage("");
         handleClose();
@@ -138,7 +138,7 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
       hasError = true;
     } else if (!passwordRegex.test(registerPassword)) {
       setRegisterPasswordError([
-        "Password must be at least 8 characters long.", 
+        "Password must be at least 8 characters long.",
         "Password must include upper and lower case letters.",
         "Password must include a number, and a special character."
       ].join('\n'));
@@ -204,7 +204,7 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
     setRegisterPassword("");
     setRegisterConfirmPassword("");
   };
-  
+
 
   return (
     <>
@@ -325,11 +325,10 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
                         value="user"
                         checked={registerRole === "user"}
                         onChange={(e) => setRegisterRole(e.currentTarget.value)}
-                        className={`${
-                          registerRole === "user"
+                        className={`${registerRole === "user"
                             ? "toggle-button-custom-active"
                             : "toggle-button-custom"
-                        }`}
+                          }`}
                       >
                         <User size={18} /> User
                       </ToggleButton>
@@ -341,11 +340,10 @@ const LoginRegisterModal = ({ show, handleClose }: LoginRegisterModalProps) => {
                         value="helper"
                         checked={registerRole === "helper"}
                         onChange={(e) => setRegisterRole(e.currentTarget.value)}
-                        className={`${
-                          registerRole === "helper"
+                        className={`${registerRole === "helper"
                             ? "toggle-button-custom-active"
                             : "toggle-button-custom"
-                        }`}
+                          }`}
                       >
                         <HelpingHand size={18} /> Helper
                       </ToggleButton>

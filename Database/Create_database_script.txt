@@ -67,7 +67,8 @@ create table dbo.Helpers
     Firstname   varchar(255) not null,
     Lastname    varchar(255) not null,
     Description varchar(255) not null,
-    Experience  int          not null,
+    Experience  int          not null
+        constraint CK_Helpers_Experience check (Experience between 1 and 3),
     Phone       varchar(20)  not null,
     Email       varchar(255) not null,
     Password    varchar(255) not null,
