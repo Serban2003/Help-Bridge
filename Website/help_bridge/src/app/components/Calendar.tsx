@@ -43,6 +43,10 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
       setBookingError("You must be logged in to book a consultation.");
       return;
     }
+    if (auth.role === "helper") {
+      setBookingError("Helpers cannot book sessions.");
+      return;
+    }
     if (selectedDate && selectedTime && title.trim() && message.trim()) {
       const result = await onBook(
         selectedDate,
@@ -79,13 +83,13 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
           slot.Date instanceof Date
             ? slot.Date.toISOString().split("T")[0]
             : new Date(slot.Date).toISOString().split("T")[0];
-        return slotDateStr === dateStr && slot.IsBooked == 0 && 
-        (
-          // If not today, always show
-          slotDateStr !== new Date().toISOString().split("T")[0] ||
-          // If today, only show if slot hour is in the future
-          new Date(slot.Date).getHours() > new Date().getHours()
-        );
+        return slotDateStr === dateStr && slot.IsBooked == 0 &&
+          (
+            // If not today, always show
+            slotDateStr !== new Date().toISOString().split("T")[0] ||
+            // If today, only show if slot hour is in the future
+            new Date(slot.Date).getHours() > new Date().getHours()
+          );
       });
 
       const todayUTC = new Date();
@@ -100,9 +104,8 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
       calendar.push(
         <div
           key={day}
-          className={`calendar-day rounded ${
-            hasAvailableSlot && !isPast ? "available" : "disabled"
-          } ${selectedDate === dateStr ? "selected" : ""}`}
+          className={`calendar-day rounded ${hasAvailableSlot && !isPast ? "available" : "disabled"
+            } ${selectedDate === dateStr ? "selected" : ""}`}
           onClick={() => {
             if (hasAvailableSlot && !isPast) {
               setSelectedDate(dateStr);
@@ -121,8 +124,8 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
 
   // Disable previous month button if current month is the same as today or earlier
   const isPrevDisabled =
-  currentYear < today.getUTCFullYear() ||
-  (currentYear === today.getUTCFullYear() && currentMonth <= today.getUTCMonth());
+    currentYear < today.getUTCFullYear() ||
+    (currentYear === today.getUTCFullYear() && currentMonth <= today.getUTCMonth());
 
   const maxDate = new Date(Date.UTC(today.getUTCFullYear() + 1, today.getUTCMonth(), 1));
   const isNextDisabled =
@@ -189,67 +192,73 @@ const Calendar = ({ availableSlots, onBook }: CalendarProps) => {
                 return (
                   slotDate.toISOString().split("T")[0] === selectedDate && slot.IsBooked == 0 &&
                   (
-                    // If not today, always show
                     slotDate.toLocaleDateString("en-CA") !== new Date().toLocaleDateString("en-CA")
-                    // If today, only show if slot hour is in the future
                     || slotDate.getHours() > new Date().getHours()
                   )
                 );
               }) || [])
-              .sort((a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime())
-              .map((slot) => (
-                <Button
-                  key={slot.AV_id}
-                  className={
-                    selectedTime === slot.getFormattedTime()
-                      ? "toggle-button-custom-active"
-                      : "toggle-button-custom"
-                  }
-                  onClick={() => {
-                    setSelectedTime(slot.getFormattedTime());
-                    setSelectedAvailability(slot.AV_id.toString());
-                    setBookingError("");
-                  }}
-                >
-                  {slot.getFormattedTime()}
-                </Button>
-              ))}
+                .sort((a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime())
+                .map((slot) => (
+                  <Button
+                    key={slot.AV_id}
+                    className={
+                      selectedTime === slot.getFormattedTime()
+                        ? "toggle-button-custom-active"
+                        : "toggle-button-custom"
+                    }
+                    onClick={() => {
+                      setSelectedTime(slot.getFormattedTime());
+                      setSelectedAvailability(slot.AV_id.toString());
+                      setBookingError("");
+                    }}
+                  >
+                    {slot.getFormattedTime()}
+                  </Button>
+                ))}
             </div>
 
-            <div className="mb-3">
-              <label className="form-label fw-semibold">Title</label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="e.g. Help with website"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </div>
+            {auth?.role === "helper" ? (
+              <div className="text-danger mb-3">
+                Helpers cannot book sessions.
+              </div>
+            ) : (
+              <>
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Title</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g. Help with website"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                </div>
 
-            <div className="mb-3">
-              <label className="form-label fw-semibold">Message</label>
-              <textarea
-                className="form-control"
-                rows={3}
-                placeholder="Add details about your request..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-            </div>
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Message</label>
+                  <textarea
+                    className="form-control"
+                    rows={3}
+                    placeholder="Add details about your request..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                  />
+                </div>
 
-            <div className="d-flex flex-column">
-              <Button
-                onClick={handleBook}
-                className="custom-button mb-2"
-                disabled={!selectedTime || !title || !message}
-              >
-                Confirm Booking
-              </Button>
-              {bookingError && (
-                <div className="text-danger small mt-1">{bookingError}</div>
-              )}
-            </div>
+                <div className="d-flex flex-column">
+                  <Button
+                    onClick={handleBook}
+                    className="custom-button mb-2"
+                    disabled={!selectedTime || !title || !message}
+                  >
+                    Confirm Booking
+                  </Button>
+                  {bookingError && (
+                    <div className="text-danger small mt-1">{bookingError}</div>
+                  )}
+                </div>
+              </>
+            )}
           </>
         )}
       </div>
