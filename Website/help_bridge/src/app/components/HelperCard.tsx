@@ -87,7 +87,7 @@ const HelperCard = ({
   }, [H_id]);
 
   return (
-    <div className="helper-card rounded shadow flex-fill" onClick={handleClick}>
+    <div className="helper-card rounded shadow flex-fill h-100" onClick={handleClick}>
       <div className="helper-avatar">
         {loading ? (
           <div className="spinner-container">
