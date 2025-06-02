@@ -77,6 +77,10 @@ const AccountSetupModal = ({
     }
   }, [show, registerRole]);
 
+  const cleanInput = (input: string): string => {
+    return input.trim().replace(/\s{2,}/g, " ");
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -85,13 +89,55 @@ const AccountSetupModal = ({
       setValidated(true);
       return;
     }
+
+    // Clean all input fields
+    const cleanedFirstname = cleanInput(firstname);
+    const cleanedLastname = cleanInput(lastname);
+    const cleanedPhone = cleanInput(phone);
+    const cleanedDescription = cleanInput(description);
+    const cleanedExperience = cleanInput(experience);
+    const cleanedCustomCompanyName = cleanInput(customCompanyName);
+    const cleanedCustomCompanyDescription = cleanInput(
+      customCompanyDescription
+    );
+    const cleanedCustomCompanyAddress = cleanInput(customCompanyAddress);
+
+    if (
+      cleanedFirstname === "" ||
+      cleanedLastname === "" ||
+      cleanedPhone === "" ||
+      (registerRole === "helper" &&
+        (cleanedDescription === "" || cleanedExperience === "")) ||
+      (registerRole === "helper" &&
+        selectedCompany === "other" &&
+        (cleanedCustomCompanyName === "" ||
+          cleanedCustomCompanyDescription === "" ||
+          cleanedCustomCompanyAddress === ""))
+    ) {
+      setErrorMessage(
+        "Please fill in all fields properly. Fields cannot be just spaces."
+      );
+      setValidated(true);
+      return;
+    }
+
+    // Update state (optional, to reflect cleaned values in UI)
+    setFirstname(cleanedFirstname);
+    setLastname(cleanedLastname);
+    setPhone(cleanedPhone);
+    setDescription(cleanedDescription);
+    setExperience(cleanedExperience);
+    setCustomCompanyName(cleanedCustomCompanyName);
+    setCustomCompanyDescription(cleanedCustomCompanyDescription);
+    setCustomCompanyAddress(cleanedCustomCompanyAddress);
+
     // Phone format validation
-    if (!phoneRegex.test(phone)) {
+    if (!phoneRegex.test(cleanedPhone)) {
       setPhoneError("Invalid phone number format.");
       setValidated(true);
       return;
     } else {
-      setPhoneError(""); // Clear any previous errors
+      setPhoneError("");
     }
 
     let registerSuccess = false;
@@ -107,11 +153,11 @@ const AccountSetupModal = ({
       if (registerRole === "user") {
         const user = new UserModel(
           0,
-          firstname,
-          lastname,
+          cleanedFirstname,
+          cleanedLastname,
           registerEmail,
           registerPassword,
-          phone,
+          cleanedPhone,
           profileImageId,
           new Date()
         );
@@ -136,14 +182,18 @@ const AccountSetupModal = ({
           selectedCompany === "other" ? 0 : parseInt(selectedCompany);
 
         if (selectedCompany === "other") {
-          // Check for duplicate company name (case-insensitive, trimmed)
           const duplicate = companies.some(
-            (c) => c.Name.trim().toLowerCase() === customCompanyName.trim().toLowerCase()
+            (c) =>
+              c.Name.trim().toLowerCase() ===
+              cleanedCustomCompanyName.toLowerCase()
           );
           if (duplicate) {
-            setErrorMessage("A company with this name already exists. Please select it from the list or choose a different name.");
+            setErrorMessage(
+              "A company with this name already exists. Please select it from the list or choose a different name."
+            );
             return;
           }
+
           if (companyLogo) {
             const imageFormData = new FormData();
             imageFormData.append("image", companyLogo);
@@ -167,9 +217,9 @@ const AccountSetupModal = ({
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                name: customCompanyName,
-                description: customCompanyDescription,
-                address: customCompanyAddress,
+                name: cleanedCustomCompanyName,
+                description: cleanedCustomCompanyDescription,
+                address: cleanedCustomCompanyAddress,
                 I_id: companyLogoId,
               }),
             }
@@ -184,13 +234,13 @@ const AccountSetupModal = ({
           0,
           parseInt(selectedCategory),
           finalCompanyId,
-          firstname,
-          lastname,
-          description,
-          parseInt(experience),
+          cleanedFirstname,
+          cleanedLastname,
+          cleanedDescription,
+          parseInt(cleanedExperience),
           registerEmail,
           registerPassword,
-          phone,
+          cleanedPhone,
           profileImageId,
           new Date()
         );
@@ -216,9 +266,7 @@ const AccountSetupModal = ({
         registerSuccess = true;
       }
 
-      // Only attempt login if registration succeeded
       if (registerSuccess) {
-        console.log(registerEmail + " " + registerPassword);
         const loginRes = await fetch("http://localhost:5000/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -239,7 +287,6 @@ const AccountSetupModal = ({
         resetForm();
       }
     } catch (err) {
-      // Attempt to delete the uploaded image if registration fails
       if (profileImageId) {
         try {
           await fetch(`http://localhost:5000/api/images?id=${profileImageId}`, {
@@ -250,7 +297,6 @@ const AccountSetupModal = ({
         }
       }
 
-      // Attempt to delete the uploaded company logo if registration fails
       if (companyLogoId) {
         try {
           await fetch(`http://localhost:5000/api/images?id=${companyLogoId}`, {
@@ -261,7 +307,6 @@ const AccountSetupModal = ({
         }
       }
 
-      // Attempt to delete the newly created company if registration fails
       if (finalCompanyId) {
         try {
           await fetch(
@@ -521,7 +566,7 @@ const AccountSetupModal = ({
             </Button>
           </div>
           {errorMessage && (
-            <p className="text-danger text-center mt-2 pb-0">{errorMessage}</p>
+            <p className="text-danger text-center mt-2 pb-0 mb-0">{errorMessage}</p>
           )}
         </Form>
       </Modal.Body>
