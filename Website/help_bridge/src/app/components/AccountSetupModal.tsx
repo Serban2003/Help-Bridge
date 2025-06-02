@@ -81,6 +81,12 @@ const AccountSetupModal = ({
     return input.trim().replace(/\s{2,}/g, " ");
   };
 
+  const hasInvalidCharacters = (input: string) => {
+    // Allow letters, numbers, spaces, basic punctuation: . , ' ’ - ( ) ! ?
+    const allowedPattern = /^[a-zA-Z0-9\s.,'’\-()!?]+$/;
+    return !allowedPattern.test(input);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -116,6 +122,34 @@ const AccountSetupModal = ({
     ) {
       setErrorMessage(
         "Please fill in all fields properly. Fields cannot be just spaces."
+      );
+      setValidated(true);
+      return;
+    }
+
+    if (
+      cleanedFirstname === "" ||
+      hasInvalidCharacters(cleanedFirstname) ||
+      cleanedLastname === "" ||
+      hasInvalidCharacters(cleanedLastname) ||
+      cleanedPhone === "" ||
+      hasInvalidCharacters(cleanedPhone) ||
+      (registerRole === "helper" &&
+        (cleanedDescription === "" ||
+          hasInvalidCharacters(cleanedDescription) ||
+          cleanedExperience === "" ||
+          hasInvalidCharacters(cleanedExperience))) ||
+      (registerRole === "helper" &&
+        selectedCompany === "other" &&
+        (cleanedCustomCompanyName === "" ||
+          hasInvalidCharacters(cleanedCustomCompanyName) ||
+          cleanedCustomCompanyDescription === "" ||
+          hasInvalidCharacters(cleanedCustomCompanyDescription) ||
+          cleanedCustomCompanyAddress === "" ||
+          hasInvalidCharacters(cleanedCustomCompanyAddress)))
+    ) {
+      setErrorMessage(
+        "Please fill in all fields properly. Fields cannot be just spaces or contain invalid characters."
       );
       setValidated(true);
       return;
@@ -566,7 +600,9 @@ const AccountSetupModal = ({
             </Button>
           </div>
           {errorMessage && (
-            <p className="text-danger text-center mt-2 pb-0 mb-0">{errorMessage}</p>
+            <p className="text-danger text-center mt-2 pb-0 mb-0">
+              {errorMessage}
+            </p>
           )}
         </Form>
       </Modal.Body>

@@ -17,7 +17,7 @@ export default function ClientAppWrapper({ children }: { children: React.ReactNo
   return (
     <>
       <MainNavbar />
-      <main>{children}</main>
+      <main className="h-100 d-flex flex-column">{children}</main>
       <Footer />
     </>
   );

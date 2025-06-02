@@ -89,8 +89,8 @@ export default function SearchPage() {
 
   return (
     // Main container for the search page
-    <div className="bg-secondary">
-      <div className="container  pt-5 pb-5">
+    <div className="bg-secondary flex-fill">
+      <div className="container pt-5 pb-5">
         <div className="d-flex flex-column align-items-center justify-content-center">
           <img
             src="/images/helpers_page.svg"
